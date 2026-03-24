@@ -1,0 +1,194 @@
+---
+interface Props {
+    title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<div class="nav-dropdown">
+    <button class="nav-item dropdown-trigger">{title}</button>
+    <!-- Invisible bridge to prevent hover gap -->
+    <div class="dropdown-bridge"></div>
+    <div class="dropdown-menu">
+        <slot />
+    </div>
+</div>
+
+<style>
+    .nav-item {
+        padding: 0.75rem 1rem;
+        color: var(--black);
+        text-decoration: none;
+        font-size: 0.95rem;
+        font-weight: 500;
+        border: none;
+        background: none;
+        cursor: pointer;
+        transition:
+            color 0.2s ease,
+            border-bottom-color 0.2s ease;
+        border-bottom: 3px solid transparent;
+        position: relative;
+    }
+
+    .nav-item:hover {
+        color: var(--accent);
+        border-bottom-color: var(--accent);
+    }
+
+    .nav-dropdown {
+        position: relative;
+    }
+
+    /* Invisible bridge to fill gap between button and dropdown */
+    .dropdown-bridge {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        height: 0.5rem;
+        visibility: hidden;
+        pointer-events: auto;
+        z-index: 150;
+    }
+
+    .dropdown-trigger {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+
+    .dropdown-trigger::after {
+        content: "";
+        display: inline-block;
+        width: 4px;
+        height: 4px;
+        border-right: 1.5px solid currentColor;
+        border-bottom: 1.5px solid currentColor;
+        transform: rotate(-45deg);
+        margin-left: 0.25rem;
+        transition: transform 0.2s ease;
+    }
+
+    .nav-dropdown:hover .dropdown-trigger::after {
+        transform: rotate(-45deg) translateY(-2px);
+    }
+
+    .dropdown-menu {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        background: white;
+        border: 1px solid #e5e5e5;
+        border-radius: 4px;
+        min-width: 200px;
+        padding: 0.5rem 0;
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+        transform: translateY(-8px);
+        transition: all 0.2s ease;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        z-index: 200;
+        margin-top: 0.5rem;
+    }
+
+    .nav-dropdown:hover .dropdown-menu {
+        opacity: 1;
+        visibility: visible;
+        pointer-events: auto;
+        transform: translateY(0);
+    }
+
+    .nav-dropdown:hover .dropdown-bridge {
+        visibility: visible;
+    }
+
+    @media (max-width: 768px) {
+        .nav-item {
+            width: 100%;
+            padding: 0.75rem 0;
+            border: none;
+            border-bottom: 1px solid #e5e5e5;
+        }
+
+        .nav-dropdown {
+            width: 100%;
+        }
+
+        /* Hide bridge on mobile */
+        .dropdown-bridge {
+            display: none;
+        }
+
+        .dropdown-menu {
+            position: static;
+            opacity: 0;
+            visibility: hidden;
+            max-height: 0;
+            overflow: hidden;
+            border: none;
+            box-shadow: none;
+            margin: 0;
+            padding: 0;
+            transform: none;
+            background: #f9f9f9;
+        }
+
+        .nav-dropdown:hover .dropdown-menu,
+        .nav-dropdown.active .dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            max-height: 500px;
+            padding: 0.5rem 0 0.5rem 2rem;
+        }
+    }
+</style>
+
+<style is:global>
+    .dropdown-menu a {
+        display: block;
+        padding: 0.75rem 1.5rem;
+        color: var(--black);
+        text-decoration: none;
+        font-size: 0.9rem;
+        font-weight: 400;
+        transition:
+            background-color 0.2s ease,
+            color 0.2s ease;
+    }
+
+    .dropdown-menu a:hover {
+        background-color: #f5f5f5;
+        color: var(--accent);
+    }
+</style>
+
+<script>
+    // Handle mobile dropdown menu on touch devices
+    const dropdowns = document.querySelectorAll(".nav-dropdown");
+    let closeTimeout: ReturnType<typeof setTimeout> | null = null;
+
+    dropdowns.forEach((dropdown) => {
+        const trigger = dropdown.querySelector(".dropdown-trigger");
+        if (trigger) {
+            trigger.addEventListener("click", (e: Event) => {
+                if (window.innerWidth <= 768) {
+                    e.preventDefault();
+                    dropdown.classList.toggle("active");
+                }
+            });
+        }
+    });
+
+    // Close dropdowns when clicking outside
+    document.addEventListener("click", (e: Event) => {
+        const target = e.target as Node;
+        dropdowns.forEach((d) => {
+            if (!d.contains(target)) {
+                d.classList.remove("active");
+            }
+        });
+    });
+</script>

@@ -1,0 +1,125 @@
+---
+import { SITE_TITLE } from "../consts";
+import HeaderSimple from "./HeaderSimple.astro";
+import HeaderDropdown from "./HeaderDropdown.astro";
+import SocialLinks from "./SocialLinks.astro";
+---
+
+<header>
+	<nav class="navbar">
+		<div class="navbar-left">
+			<h2 class="site-logo"><a href="/">{SITE_TITLE}</a></h2>
+		</div>
+
+		<div class="nav-categories">
+			<HeaderSimple title="/">Home</HeaderSimple>
+			<HeaderSimple title="/about">About me</HeaderSimple>
+			<HeaderSimple title="/research">Research</HeaderSimple>
+			<HeaderSimple title="/teaching">Teaching</HeaderSimple>
+			<HeaderSimple title="/curriculum">CV</HeaderSimple>
+
+			<HeaderDropdown title="Tech Blog">
+				<a href="/blog/research">Research</a>
+				<a href="/blog/software_engineering">Software Engineering</a>
+				<a href="/blog/machine_learning">Machine Learning</a>
+				<a href="/blog/devops">DevOps</a>
+				<a href="/blog/projects">Projects</a>
+				<a href="/blog/productivity">Productivity</a>
+			</HeaderDropdown>
+
+			<HeaderDropdown title="Opinions">
+				<a href="/opinions/life">Life</a>
+				<a href="/opinions/economy">Economy</a>
+				<a href="/opinions/politics">Politics</a>
+				<a href="/opinions/society">Society</a>
+				<a href="/opinions/religion">Religion</a>
+			</HeaderDropdown>
+		</div>
+
+		<div class="navbar-right">
+			<SocialLinks size={24} align="flex-start"/>
+		</div>
+	</nav>
+</header>
+
+<style>
+	header {
+		background: white;
+		border-bottom: 1px solid #e5e5e5;
+		position: sticky;
+		top: 0;
+		z-index: 100;
+	}
+
+	.navbar {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		max-width: 1440px;
+		margin: 0 auto;
+		padding: 0 1rem;
+		height: 60px;
+	}
+
+	.navbar-left {
+		flex: 0 0 auto;
+	}
+
+	.site-logo {
+		margin: 0;
+		font-size: 1.2rem;
+		font-weight: 700;
+		letter-spacing: 0.05em;
+	}
+
+	.site-logo a {
+		color: var(--black);
+		text-decoration: none;
+		transition: color 0.2s ease;
+	}
+
+	.site-logo a:hover {
+		color: var(--accent);
+	}
+
+	.nav-categories {
+		display: flex;
+		align-items: center;
+		gap: 0;
+		flex: 1;
+		justify-content: center;
+		margin: 0 2rem;
+	}
+
+	.navbar-right {
+		flex: 0 0 auto;
+	}
+
+	@media (max-width: 768px) {
+		.navbar {
+			flex-wrap: wrap;
+			height: auto;
+			padding: 0.5rem 1rem;
+		}
+
+		.navbar-left {
+			width: 100%;
+			margin-bottom: 0.5rem;
+		}
+
+		.nav-categories {
+			width: 100%;
+			flex-direction: column;
+			gap: 0;
+			margin: 0;
+			justify-content: flex-start;
+		}
+
+		.navbar-right {
+			width: 100%;
+			margin-top: 0.5rem;
+			padding-top: 0.5rem;
+			border-top: 1px solid #e5e5e5;
+		}
+	}
+</style>
