@@ -1,0 +1,61 @@
+---
+export interface Props {
+    title: string;
+    columns?: 2 | 3;
+}
+
+const { title, columns = 2 } = Astro.props;
+---
+
+<section class={`grid-section grid-${columns}`}>
+    <h2 class="section-title">{title}</h2>
+    <div class="grid-container">
+        <slot />
+    </div>
+</section>
+
+<style>
+    .grid-section {
+        max-width: 720px;
+        margin: 0 auto 3em;
+        padding: 2em;
+        border-radius: 8px;
+        background-color: rgba(var(--section-dark), 0.15);
+    }
+
+    .grid-section.grid-2 .grid-container {
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    }
+
+    .grid-section.grid-3 .grid-container {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    }
+
+    .section-title {
+        font-size: 1.75em;
+        margin: 0 0 1em 0;
+        border-bottom: 2px solid rgb(var(--accent));
+        color: rgb(var(--gray-dark));
+    }
+
+    .grid-container {
+        display: grid;
+        gap: 1.5em;
+        width: 100%;
+    }
+
+    @media (max-width: 720px) {
+        .grid-section {
+            padding: 1.5em;
+        }
+
+        .grid-section.grid-2 .grid-container,
+        .grid-section.grid-3 .grid-container {
+            grid-template-columns: 1fr;
+        }
+
+        .section-title {
+            font-size: 1.5em;
+        }
+    }
+</style>

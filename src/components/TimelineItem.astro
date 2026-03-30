@@ -1,0 +1,105 @@
+---
+export interface Props {
+    title: string;
+    subtitle?: string;
+    date?: string;
+}
+
+const { title, subtitle, date } = Astro.props;
+---
+
+<div class="timeline-item">
+    <div class="timeline-dot"></div>
+    <div class="timeline-content">
+        <h3>{title}</h3>
+        {
+            subtitle && (
+                <p class="timeline-subtitle">
+                    <strong>{subtitle}</strong>
+                </p>
+            )
+        }
+        {date && <p class="timeline-date">{date}</p>}
+        <slot />
+    </div>
+</div>
+
+<style>
+    .timeline-item {
+        display: flex;
+        gap: 1.5em;
+        position: relative;
+    }
+
+    .timeline-item:not(:last-child)::before {
+        content: "";
+        position: absolute;
+        left: 13px;
+        top: 40px;
+        bottom: -2em;
+        width: 2px;
+        background-color: var(--section-timeline);
+    }
+
+    .timeline-dot {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        background-color: var(--section-timeline);
+        border: 3px solid rgba(var(--section-timeline), 0.3);
+        flex-shrink: 0;
+        margin-top: 0.25em;
+    }
+
+    .timeline-content h3 {
+        margin: 0 0 0.25em 0;
+        color: rgb(var(--gray-dark));
+        font-size: 1.25em;
+    }
+
+    .timeline-subtitle {
+        color: rgb(var(--gray));
+        margin: 0 0 0.25em 0;
+        font-size: 0.95em;
+    }
+
+    .timeline-date {
+        color: rgb(var(--gray));
+        margin: 0 0 0.5em 0;
+        font-size: 0.95em;
+    }
+
+    :global(.timeline-content h4) {
+        margin: 1em 0 0.5em 0;
+        color: rgb(var(--gray-dark));
+        font-size: 1.05em;
+    }
+
+    :global(.timeline-content p) {
+        margin: 0;
+        line-height: 1.4;
+        color: rgb(var(--gray-dark));
+    }
+
+    :global(.timeline-content ul) {
+        margin: 0;
+        padding-left: 1.5em;
+        line-height: 1.4;
+    }
+
+    @media (max-width: 720px) {
+        .timeline-item {
+            gap: 1em;
+        }
+
+        .timeline-dot {
+            width: 24px;
+            height: 24px;
+            border-width: 2px;
+        }
+
+        .timeline-item:not(:last-child)::before {
+            left: 11px;
+        }
+    }
+</style>
