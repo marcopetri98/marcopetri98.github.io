@@ -1,0 +1,122 @@
+---
+export interface Props {
+    icon?: string;
+    title: string;
+    subtitle?: string;
+    date?: string;
+    badge?: string;
+    link?: string;
+}
+
+const { icon, title, subtitle, date, badge, link } = Astro.props;
+---
+
+<div class="grid-item">
+    {icon && <div class="grid-item-icon">{icon}</div>}
+    <div class="grid-item-content">
+        <h3>{title}</h3>
+        {subtitle && <p class="grid-item-subtitle">{subtitle}</p>}
+        {date && <p class="grid-item-date">{date}</p>}
+        {badge && <p class="grid-item-badge">{badge}</p>}
+        <slot />
+    </div>
+    {
+        link && (
+            <a href={link} class="grid-item-link">
+                View →
+            </a>
+        )
+    }
+</div>
+
+<style>
+    .grid-item {
+        display: flex;
+        flex-direction: column;
+        padding: 1.5em;
+        background-color: rgba(var(--accent), 0.08);
+        border-radius: 8px;
+        border: 1px solid rgba(var(--accent), 0.15);
+        transition: all 0.3s ease;
+        min-height: 100%;
+    }
+
+    .grid-item:hover {
+        background-color: rgba(var(--accent), 0.12);
+        border-color: rgba(var(--accent), 0.25);
+        transform: translateY(-2px);
+    }
+
+    .grid-item-icon {
+        font-size: 2.5em;
+        margin-bottom: 0.2em;
+        line-height: 1;
+    }
+
+    .grid-item-content {
+        flex: 1;
+    }
+
+    .grid-item-content h3 {
+        margin: 0;
+        color: rgb(var(--gray-dark));
+        font-size: 1.1em;
+        line-height: 1.3;
+    }
+
+    .grid-item-subtitle {
+        color: rgb(var(--gray));
+        margin: 0;
+        font-size: 0.9em;
+        font-weight: 500;
+    }
+
+    .grid-item-date {
+        color: rgb(var(--gray));
+        margin: 0;
+        font-size: 0.85em;
+    }
+
+    .grid-item-badge {
+        color: rgb(var(--accent));
+        background-color: rgba(var(--accent), 0.15);
+        padding: 0.25em 0.75em;
+        border-radius: 4px;
+        font-size: 0.8em;
+        font-weight: 600;
+        display: inline-block;
+        margin: 0.5em 0;
+    }
+
+    .grid-item-link {
+        color: rgb(var(--accent));
+        text-decoration: none;
+        font-weight: 600;
+        margin-top: 1em;
+        transition: color 0.3s ease;
+        align-self: flex-start;
+    }
+
+    .grid-item-link:hover {
+        color: rgb(var(--accent-dark));
+        text-decoration: underline;
+    }
+
+    :global(.grid-item-content p) {
+        margin: 0;
+    }
+
+    @media (max-width: 720px) {
+        .grid-item {
+            padding: 1em;
+        }
+
+        .grid-item-icon {
+            font-size: 2em;
+        }
+
+        .grid-item-content h3 {
+            font-size: 1em;
+        }
+    }
+</style>

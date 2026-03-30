@@ -1,0 +1,55 @@
+---
+export interface Props {
+    title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<section class="section">
+    <h2 class="section-title">{title}</h2>
+    <div class="section-content">
+        <slot />
+    </div>
+</section>
+
+<style>
+    .section {
+        max-width: 720px;
+        margin: 0 auto 3em;
+        padding: 2em;
+        border-radius: 8px;
+        transition: background-color 0.3s ease;
+    }
+
+    .section:nth-child(odd) {
+        background-color: rgba(var(--section-dark), 0.12);
+    }
+
+    .section:nth-child(even) {
+        background-color: rgba(var(--section-light), 0.15);
+    }
+
+    .section-title {
+        font-size: 1.75em;
+        margin: 0 0 1em 0;
+        border-bottom: 2px solid rgb(var(--accent));
+        color: rgb(var(--gray-dark));
+    }
+
+    .section-content {
+        display: flex;
+        flex-direction: column;
+        gap: 1em;
+    }
+
+    @media (max-width: 720px) {
+        .section {
+            padding: 1.5em;
+        }
+
+        .section-title {
+            font-size: 1.5em;
+        }
+    }
+</style>
