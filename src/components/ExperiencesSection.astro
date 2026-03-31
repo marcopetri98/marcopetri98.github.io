@@ -1,0 +1,202 @@
+---
+interface ExperienceLink {
+    label: string;
+    href: string;
+}
+
+interface Experience {
+    title: string;
+    institution?: string;
+    role?: string;
+    period?: string;
+    location?: string;
+    description?: string;
+    topics?: string[];
+    links?: ExperienceLink[];
+}
+
+interface Props {
+    title?: string;
+    experiences: Experience[];
+}
+
+const { title = "Experiences", experiences } = Astro.props;
+---
+
+<section class="experience">
+    <div class="section-heading">
+        <h2>{title}</h2>
+    </div>
+
+    <ol class="experience-list">
+        {
+            experiences.map((experience) => (
+                <li class="experience-card">
+                    <article>
+                        <h3>{experience.title}</h3>
+
+                        {(experience.institution ||
+                            experience.role ||
+                            experience.period) && (
+                            <p class="experience-meta">
+                                {experience.institution && (
+                                    <span class="meta-item">
+                                        {experience.institution}
+                                    </span>
+                                )}
+                                {experience.role && (
+                                    <span class="meta-item">
+                                        {experience.role}
+                                    </span>
+                                )}
+                                {experience.period && (
+                                    <span class="meta-item">
+                                        {experience.period}
+                                    </span>
+                                )}
+                                {experience.location && (
+                                    <span class="meta-item">
+                                        {experience.location}
+                                    </span>
+                                )}
+                            </p>
+                        )}
+
+                        {experience.description && (
+                            <p class="experience-description">
+                                {experience.description}
+                            </p>
+                        )}
+
+                        {experience.topics && experience.topics.length > 0 && (
+                            <ul class="experience-topics">
+                                {experience.topics.map((topic) => (
+                                    <li>{topic}</li>
+                                ))}
+                            </ul>
+                        )}
+
+                        {experience.links && experience.links.length > 0 && (
+                            <div class="experience-links">
+                                {experience.links.map((link) => (
+                                    <a href={link.href}>{link.label}</a>
+                                ))}
+                            </div>
+                        )}
+                    </article>
+                </li>
+            ))
+        }
+    </ol>
+</section>
+
+<style>
+    .experience {
+        width: 720px;
+        margin: 0 auto;
+    }
+
+    .section-heading {
+        margin-bottom: 1.25rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 2px solid var(--accent);
+    }
+
+    .section-heading h2 {
+        margin: 0;
+        font-size: 1.9rem;
+        color: rgb(var(--gray-dark));
+    }
+
+    .experience-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: grid;
+        gap: 1rem;
+    }
+
+    .experience-card {
+        margin: 0;
+        padding: 1.5rem;
+        background: rgba(var(--section-dark), 0.12);
+        border: 1px solid rgba(var(--section-dark), 0.24);
+        border-radius: 12px;
+    }
+
+    .experience-card h3 {
+        margin: 0 0 0.5rem;
+        font-size: 1.2rem;
+        line-height: 1.35;
+        color: rgb(var(--gray-dark));
+    }
+
+    .experience-meta {
+        display: flex;
+        flex-wrap: wrap;
+        margin: 0 0 0.85rem;
+        color: rgb(var(--gray));
+        font-size: 0.95rem;
+    }
+
+    .meta-item:not(:first-child) {
+        white-space: nowrap;
+    }
+
+    .meta-item:not(:first-child)::before {
+        content: "•";
+        margin: 0 0.35rem;
+        color: rgb(var(--gray));
+    }
+
+    .experience-description {
+        margin: 0;
+        line-height: 1.7;
+        color: rgb(var(--gray-dark));
+    }
+
+    .experience-topics {
+        list-style: none;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin: 1rem 0 0;
+        padding: 0;
+    }
+
+    .experience-topics li {
+        padding: 0.25rem 0.7rem;
+        border-radius: 999px;
+        background: rgba(var(--section-light), 0.65);
+        color: var(--accent-dark);
+        font-size: 0.85rem;
+    }
+
+    .experience-links {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.9rem;
+        margin-top: 1rem;
+    }
+
+    .experience-links a {
+        color: var(--accent);
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+    .experience-links a:hover {
+        color: var(--accent-dark);
+        text-decoration: underline;
+    }
+
+    @media (max-width: 720px) {
+        .section-heading h2 {
+            font-size: 1.6rem;
+        }
+
+        .experience-card {
+            padding: 1.1rem;
+        }
+    }
+</style>
