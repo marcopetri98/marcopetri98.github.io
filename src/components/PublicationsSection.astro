@@ -1,0 +1,266 @@
+---
+interface PublicationLink {
+    label: string;
+    href: string;
+}
+
+interface Publication {
+    title: string;
+    authors?: string;
+    venue?: string;
+    year?: string | number;
+    abstract?: string;
+    note?: string;
+    tags?: string[];
+    href?: string;
+    links?: PublicationLink[];
+}
+
+interface Props {
+    title?: string;
+    publications: Publication[];
+}
+
+const { title = "Publications", publications } = Astro.props;
+---
+
+<section class="publications">
+    <div class="section-heading">
+        <h2>{title}</h2>
+    </div>
+
+    <ol class="publication-list">
+        {
+            publications.map((publication) => (
+                <li class="publication-card">
+                    <article>
+                        <h3>
+                            {publication.href ? (
+                                <a href={publication.href}>
+                                    {publication.title}
+                                </a>
+                            ) : (
+                                publication.title
+                            )}
+                        </h3>
+
+                        {(publication.authors ||
+                            publication.venue ||
+                            publication.year) && (
+                            <p class="publication-meta">
+                                <span>
+                                    {publication.authors}
+                                    {(publication.venue || publication.year) &&
+                                        " • "}
+                                    {publication.venue}
+                                    {publication.venue &&
+                                        publication.year &&
+                                        " • "}
+                                    {publication.year}
+                                </span>
+                            </p>
+                        )}
+
+                        {publication.abstract && (
+                            <details class="publication-abstract-toggle">
+                                <summary>
+                                    <span class="label-closed">
+                                        Show abstract
+                                    </span>
+                                    <span class="label-open">
+                                        Hide abstract
+                                    </span>
+                                </summary>
+                                <p class="publication-abstract">
+                                    {publication.abstract}
+                                </p>
+                            </details>
+                        )}
+
+                        {publication.note && (
+                            <p class="publication-note">{publication.note}</p>
+                        )}
+
+                        {publication.tags && publication.tags.length > 0 && (
+                            <ul class="publication-tags">
+                                {publication.tags.map((tag) => (
+                                    <li>{tag}</li>
+                                ))}
+                            </ul>
+                        )}
+
+                        {publication.links && publication.links.length > 0 && (
+                            <div class="publication-links">
+                                {publication.links.map((link) => (
+                                    <a href={link.href} target="_blank">
+                                        {link.label}
+                                    </a>
+                                ))}
+                            </div>
+                        )}
+                    </article>
+                </li>
+            ))
+        }
+    </ol>
+</section>
+
+<style>
+    .publications {
+        width: 720px;
+        margin: 0 auto;
+    }
+
+    .section-heading {
+        margin-bottom: 1.25rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 2px solid var(--accent);
+    }
+
+    .section-heading h2 {
+        margin: 0;
+        font-size: 1.9rem;
+        color: rgb(var(--gray-dark));
+    }
+
+    .publication-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: grid;
+        gap: 1rem;
+    }
+
+    .publication-card {
+        margin: 0;
+        padding: 1.5rem;
+        background: rgba(var(--section-dark), 0.12);
+        border: 1px solid rgba(var(--section-dark), 0.24);
+        border-radius: 12px;
+    }
+
+    .publication-card h3 {
+        margin: 0 0 0.5rem;
+        font-size: 1.2rem;
+        line-height: 1.35;
+        color: rgb(var(--gray-dark));
+    }
+
+    .publication-card h3 a {
+        color: inherit;
+        text-decoration: none;
+    }
+
+    .publication-card h3 a:hover {
+        color: var(--accent-dark);
+        text-decoration: underline;
+    }
+
+    .publication-meta,
+    .publication-note {
+        margin: 0;
+        color: rgb(var(--gray-dark));
+    }
+
+    .publication-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.35rem;
+        margin-bottom: 0.85rem;
+        color: rgb(var(--gray));
+        font-size: 0.95rem;
+    }
+
+    .publication-abstract-toggle {
+        margin-top: 0.9rem;
+    }
+
+    .publication-abstract-toggle summary {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        cursor: pointer;
+        color: var(--accent);
+        font-size: 0.9rem;
+        font-weight: 600;
+        list-style: none;
+    }
+
+    .publication-abstract-toggle summary::-webkit-details-marker {
+        display: none;
+    }
+
+    .publication-abstract-toggle summary:hover {
+        color: var(--accent-dark);
+    }
+
+    .publication-abstract-toggle .label-open {
+        display: none;
+    }
+
+    .publication-abstract-toggle[open] .label-closed {
+        display: none;
+    }
+
+    .publication-abstract-toggle[open] .label-open {
+        display: inline;
+    }
+
+    .publication-abstract {
+        margin-top: 0.75rem;
+        font-size: 0.92rem;
+        line-height: 1.75;
+        text-align: justify;
+    }
+
+    .publication-note {
+        margin-top: 0.75rem;
+        font-size: 0.95rem;
+        color: rgb(var(--gray));
+    }
+
+    .publication-tags {
+        list-style: none;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin: 1rem 0 0;
+        padding: 0;
+    }
+
+    .publication-tags li {
+        padding: 0.25rem 0.7rem;
+        border-radius: 999px;
+        background: rgba(var(--section-light), 0.65);
+        color: var(--accent-dark);
+        font-size: 0.85rem;
+    }
+
+    .publication-links {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.9rem;
+        margin-top: 1rem;
+    }
+
+    .publication-links a {
+        color: var(--accent);
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+    .publication-links a:hover {
+        color: var(--accent-dark);
+        text-decoration: underline;
+    }
+
+    @media (max-width: 720px) {
+        .section-heading h2 {
+            font-size: 1.6rem;
+        }
+
+        .publication-card {
+            padding: 1.1rem;
+        }
+    }
+</style>
