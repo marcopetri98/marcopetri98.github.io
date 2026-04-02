@@ -1,0 +1,83 @@
+---
+import PublicationsSection from "../components/PublicationsSection.astro";
+import ArticlePortfolio from "../layouts/ArticlePortfolio.astro";
+
+const intro = `Actually, I'm a PhD student at AIRLab, Politecnico di Milano. I'm deeply interested in Joint Embedding
+Predictive Architectures across a wide range of topics and modalities. I agree with the idea that learning and predicting
+in the latent space can improve the quality of the features learned by neural networks.
+
+At the moment, my only publications are the ones I had the pleasure of collaborating on during my Master's thesis.`;
+
+const publications = [
+    {
+        title: "Anomalearn: a modular and extensible library for the development of time series anomaly detection models",
+        authors: "Marco Petri",
+        venue: "Master Thesis",
+        year: 2023,
+        abstract:
+            "Anomaly detection is the problem of identifying abnormally and potentially dangerous or faulty behaviour. It is applied in various domains and on several data types: tabular, images, or temporal. Many current state-of-the-art anomaly detection algorithms for time series share preprocessing or postprocessing operations. Furthermore, several datasets are employed for evaluating and comparing the performance of models. Such benchmark datasets exhibit a variable degree of complexity, which may affect the evaluation of the power of the methods compared in distinct experiments. Some publicly available datasets are overly simple and their use may overestimate the power of the models tested on them. However, there is no automatic and unambiguous definition of simplicity for these datasets. The first contribution of this thesis assesses the problem of simplicity in datasets of time series anomaly detection through a formal approach. It reports a definition of simplicity for anomaly detection datasets and the definition of scores representing three different types of simplicity. It also proposes algorithms to compute these scores on datasets and the analysis of their time complexity. Secondly, although libraries have been presented for many tasks, there is still a lack of an extensible and modular library specifically developed for creating new techniques related to anomaly detection. This thesis proposes anomalearn, a library for developing new models and approaches for time series anomaly detection. It consists of a rigorous object-oriented design using UML as the first tool to describe its functioning. Furthermore, anomalearn uses an approach based on interfaces to share API design employing the Python programming language, the current standard for machine and deep learning solutions. The thesis source code can be downloaded and explored at: https://github.com/marcopetri98/2021-2022-thesis.",
+        tags: ["Anomaly Detection", "Time series", "Datasets", "Library"],
+        links: [
+            {
+                label: "Thesis",
+                href: "https://www.politesi.polimi.it/handle/10589/204117",
+            },
+            {
+                label: "Code",
+                href: "https://github.com/marcopetri98/2021-2022-thesis",
+            },
+        ],
+    },
+    {
+        title: "ODIN AD: A Framework Supporting the Life-Cycle of Time Series Anomaly Detection Applications",
+        authors:
+            "Niccoló Zangrando, Piero Fraternali, Rocio Nahime Torres, Marco Petri, Nicoló Oreste Pinciroli Vago & Sergio Herrera",
+        venue: "Advanced Analytics and Learning on Temporal Data",
+        year: 2023,
+        abstract:
+            "Anomaly detection (AD) in numerical temporal data series is a prominent task in many domains, including the analysis of industrial equipment operation, the processing of IoT data streams, and the monitoring of appliance energy consumption. The life-cycle of an AD application with a Machine Learning (ML) approach requires data collection and preparation, algorithm design and selection, training, and evaluation. All these activities contain repetitive tasks which could be supported by tools. This paper describes ODIN AD, a framework assisting the life-cycle of AD applications in the phases of data preparation, prediction performance evaluation, and error diagnosis.",
+        tags: [
+            "Anomaly Detection",
+            "Time series",
+            "Data annotation",
+            "Model evaluation",
+            "Evaluation metrics",
+        ],
+        links: [
+            {
+                label: "Paper",
+                href: "https://link.springer.com/chapter/10.1007/978-3-031-24378-3_12",
+            },
+            { label: "Code", href: "https://github.com/nahitorres/odin" },
+        ],
+    },
+    {
+        title: "Anomaly detection in quasi-periodic energy consumption data series: a comparison of algorithms",
+        authors:
+            "Niccolò Zangrando, Piero Fraternali, Marco Petri, Nicolò Oreste Pinciroli Vago & Sergio Luis Herrera González",
+        venue: "Energy Informatics",
+        year: 2022,
+        abstract:
+            "The diffusion of domotics solutions and of smart appliances and meters enables the monitoring of energy consumption at a very fine level and the development of forecasting and diagnostic applications. Anomaly detection (AD) in energy consumption data streams helps identify data points or intervals in which the behavior of an appliance deviates from normality and may prevent energy losses and break downs. Many statistical and learning approaches have been applied to the task, but the need remains of comparing their performances with data sets of different characteristics. This paper focuses on anomaly detection on quasi-periodic energy consumption data series and contrasts 12 statistical and machine learning algorithms tested in 144 different configurations on 3 data sets containing the power consumption signals of fridges. The assessment also evaluates the impact of the length of the series used for training and of the size of the sliding window employed to detect the anomalies. The generalization ability of the top five methods is also evaluated by applying them to an appliance different from that used for training. The results show that classical machine learning methods (Isolation Forest, One-Class SVM and Local Outlier Factor) outperform the best neural methods (GRU/LSTM autoencoder and multistep methods) and generalize better when applied to detect the anomalies of an appliance different from the one used for training.",
+        tags: ["Anomaly Detection", "Time series", "Machine Learning"],
+        links: [
+            {
+                label: "Paper",
+                href: "https://link.springer.com/article/10.1186/s42162-022-00230-7",
+            },
+            {
+                label: "Code",
+                href: "https://github.com/herrera-sergio/AD-periodic-TS",
+            },
+        ],
+    },
+];
+---
+
+<ArticlePortfolio
+    title="Publications"
+    description="A page listing structured publications from Marco Petri."
+    intro={intro}
+>
+    <PublicationsSection publications={publications} />
+</ArticlePortfolio>
