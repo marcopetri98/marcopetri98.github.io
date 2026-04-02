@@ -1,0 +1,26 @@
+---
+import { getCollection } from "astro:content";
+import ArticleLanding from "../layouts/ArticleLanding.astro";
+import { SITE_DESCRIPTION, SITE_TITLE } from "../consts";
+import { getArticleLandingData } from "../utils/articleLanding";
+
+var featuredPostCount = 4;
+var numberOfLastPosts = 10;
+
+const posts = await getCollection("blog");
+const { featuredPosts, latestPosts } = getArticleLandingData(
+	posts,
+	featuredPostCount,
+	numberOfLastPosts,
+);
+---
+
+<ArticleLanding
+	title={SITE_TITLE}
+	description={SITE_DESCRIPTION}
+	heroTitle="My thoughts, posts and curriculum"
+	heroText="This is my personal website. Here, I share my background, CV, publications, and experiences that define me as a computer scientist. You'll also find blog posts where I write about a wide range of topics, particularly artificial intelligence and software engineering."
+	featuredPosts={featuredPosts}
+	latestPosts={latestPosts}
+	numberOfLastPosts={numberOfLastPosts}
+/>
