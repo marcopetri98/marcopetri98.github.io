@@ -10,7 +10,7 @@ interface Experience {
     role?: string;
     period?: string;
     location?: string;
-    description?: string;
+    description?: string | string[];
     topics?: string[];
     links?: ExperienceLink[];
 }
@@ -62,11 +62,20 @@ const { title = "Experiences", experiences } = Astro.props;
                             </p>
                         )}
 
-                        {experience.description && (
+                        {typeof experience.description === "string" && (
                             <p class="experience-description">
                                 {experience.description}
                             </p>
                         )}
+
+                        {Array.isArray(experience.description) &&
+                            experience.description.length > 0 && (
+                                <ul class="experience-description-list">
+                                    {experience.description.map((item) => (
+                                        <li>{item}</li>
+                                    ))}
+                                </ul>
+                            )}
 
                         {experience.topics && experience.topics.length > 0 && (
                             <ul class="experience-topics">
@@ -154,6 +163,18 @@ const { title = "Experiences", experiences } = Astro.props;
         line-height: 1.7;
         color: rgb(var(--gray-dark));
         font-size: 1rem;
+    }
+
+    .experience-description-list {
+        margin: 0;
+        padding-left: 1.25rem;
+        color: rgb(var(--gray-dark));
+        font-size: 1rem;
+        line-height: 1.7;
+    }
+
+    .experience-description-list li + li {
+        margin-top: 0.35rem;
     }
 
     .experience-topics {
