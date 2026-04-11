@@ -1,0 +1,239 @@
+---
+import AwardsSection from "../components/AwardsSection.astro";
+import ExperiencesSection from "../components/ExperiencesSection.astro";
+import SkillsSection from "../components/SkillsSection.astro";
+import ArticlePortfolio from "../layouts/ArticlePortfolio.astro";
+
+const intro = `PhD student and machine learning researcher with an MSc in Computer Science (110/110 cum laude) from Politecnico di Milano. I combine rigorous academic work, including peer-reviewed publications and open-source projects like Anomalearn, with solid software engineering experience building backend systems in Python and Java. My strengths are in model development and experimentation (PyTorch, TensorFlow, Scikit-Learn) and producing reproducible, research-driven solutions that bridge theory and engineering practice.`;
+
+const work = [
+    {
+        title: "PhD Student",
+        institution: "AIRLab, Politecnico di Milano",
+        period: "2026 - Present",
+        description: [
+            "Still doing literature review on JEPA and planning first experiments."
+        ],
+        topics: ["Joint Embedding Predictive Architecture", "Deep Learning"],
+    },
+    {
+        title: "Data Scientist",
+        institution: "Intesa Sanpaolo",
+        period: "Nov 2025 - Feb 2026",
+        description: [
+            "Design and maintain machine learning models for anti-fraud risk classification systems and performance monitoring using Python, Scikit-Learn, Polars and PySpark."
+        ],
+        topics: ["Python", "Machine Learning", "Polars", "Pandas", "Scikit-Learn"],
+    },
+    {
+        title: "Software Engineer",
+        institution: "Reply",
+        period: "Oct 2023 - Nov 2025",
+        location: "Milano",
+        description: [
+            "Led a 3-person team in migrating an on-premises application to an Azure-based data platform, implementing ELT pipelines with Databricks (PySpark) and automating infrastructure with Terraform via GitLab CI/CD.",
+            "Designed and maintained 3 Python/FastAPI microservices for business-critical workflows, deployed via GitLab CI/CD pipelines on AKS; ensured quality with SonarQube and system monitoring with Grafana in a 9-member Agile team.",
+            "Engineered and deployed a web-based chatbot on Azure using Python, Langchain, LangGraph, Azure Functions, and Cosmos DB, integrating RAG, summarization, and prompt-driven workflows to support 10K+ users in document analysis tasks.",
+            "Automated daily ELT pipelines in Databricks to ingest industrial machine data and compute production metrics, enabling process engineers to drive analysis and BI reporting.",
+            "Co-developed a greenfield e-commerce platform in Java Spring Boot for 1,000+ biotech institutions, focusing on business logic for creation and modification of biological resources and API integrations for third-party sales automation; tested with JUnit and Mockito in a 4-person team.",
+            "Contributed to a warehouse management system for biological compounds with features to track item positions in specialized fridges; implemented third-party API integrations for automated publication on the e-commerce platform using Docker on AKS.",
+        ],
+        topics: ["Python", "Java", "Spring-Boot", "SQL", "Poetry", "Ruff", "Pre-commit", "Langchain", "Langgraph", "PySpark", "FastAPI", "Databricks", "Azure", "GitLab CI/CD", "Azure DevOps CI/CD", "Terraform", "Docker", "Kubernetes", "Powershell", "PostgreSQL", "MongoDB", "Mongoengine"],
+    },
+];
+
+const education = [
+    {
+        title: "PhD in Information Technology",
+        institution: "Politecnico di Milano",
+        period: "2026 - Present",
+        topics: ["Joint Embedding Predictive Architecture", "Deep Learning"],
+    },
+    {
+        title: "MSc in Computer Science and Engineering",
+        institution: "Politecnico di Milano",
+        period: "2020 - 2023",
+        topics: ["Advanced software engineering", "Machine Learning", "Deep Learning", "Reinforcement Learning", "Computer Vision", "Python", "C#", "Videogame design", "Tensorflow", "Scikit-Learn", "Numpy"],
+    },
+    {
+        title: "BSc in Computer Science and Engineering",
+        institution: "Politecnico di Milano",
+        period: "2017 - 2020",
+        location: "Milano",
+        topics: ["Algorithms", "Data Structures", "Algorithmic Complexity", "Design Patterns", "ER Diagrams", "C", "Java", "SQL", "Javascript", "Git", "MySQL"],
+    },
+];
+
+const skillGroups = [
+    {
+        name: "Programming Languages",
+        skills: ["Python", "Java", "SQL", "C", "C++", "C#", "Javascript", "SQL"],
+    },
+    {
+        name: "Machine and Deep Learning",
+        skills: ["Tensorflow", "PyTorch", "Keras", "Hugging Face", "Langchain", "Langgraph", "Scikit-Learn", "Scipy", "Skopt", "Statsmodels", "Numpy", "LightFM", "Implicit"],
+    },
+    {
+        name: "Software Develpment",
+        skills: ["Git", "Poetry", "Uv", "Ruff", "Pre-Commit", "SonarQube", "FastAPI", "Pydantic", "Spring-Boot", "Jakarta", "JUnit", "Maven", "Mockito", "Jackson"],
+    },
+    {
+        name: "Databases",
+        skills: ["MySQL", "PostgreSQL", "MongoDB", "SQLite", "Mongoengine", "SQLAlchemy"],
+    },
+    {
+        name: "Data Engineering",
+        skills: ["Pandas", "Polars", "PySpark", "Databricks"],
+    },
+    {
+        name: "DevOps",
+        skills: ["GitLab CI/CD", "Azure DevOps CI/CD", "Terraform", "Docker", "Kubernetes", "Shell scripts", "Powerhsell scripts"],
+    },
+];
+
+const projects = [
+    {
+        title: "Streamlit portfolio analysis web application",
+        institution: "Personal project",
+        period: "2025 - Present",
+        description:
+            "I implemented a series of portfolio analytics modules to calculate essential risk metrics, including the Sharpe Ratio, Maximum Drawdown, and Volatility, for both individual securities and multi-asset portfolios. To support data-driven investment evaluation, I built an interactive Streamlit interface that incorporates time-series visualizations, correlation matrices, and long-term return analysis. This platform also integrates basic backtesting capabilities, providing a comprehensive environment for analyzing and visualizing financial performance.",
+        topics: ["Python", "Streamlit", "Poetry", "Pandas", "Pre-Commit", "Commitizen"],
+    },
+    {
+        title: "Anomalearn, time series anomaly detection Python package",
+        institution: "Politecnico di Milano",
+        role: "Master Student",
+        period: "2022-2023",
+        description:
+            "Anomalearn is a Python package that provides modular and extensible functionalities for developing anomaly detection methods for time series data, reading publicly available time series anomaly detection datasets, creating the loading of data for experiments, and dataset evaluation functions.",
+        topics: ["Python", "Poetry", "Scikit-Learn", "Scipy", "Numpy", "Pandas", "Numba", "Skopt", "Statsmodels"],
+        links: [
+            { "label": "Repository", "href": "https://github.com/marcopetri98/anomalearn"},
+            { "label": "PyPI Package", "href": "https://pypi.org/project/anomalearn/"},
+        ]
+    },
+    {
+        title: "Triplet RANSAC, improving RANSAC performance with Deep Learning",
+        institution: "Politecnico di Milano",
+        role: "Master Student",
+        period: "2022",
+        description:
+            "This work analyses the Localization task of RGB-D images using a Deep Neural Network (DNN) tuned to improve the baseline performance of RANSAC by exploiting visual semantic information. We propose a DNN able to extract a semantic sampling distribution from paired key points to improve the Mean Average Accuracy (mAA), chosen as a reference metric. Next, the importance of the depth channel is shown by comparing the same DNN trained on RGB or RGB-D. Finally, Point Clouds are generated from paired images of the same scene, and Registration is performed to visualize the results in 3D space through the depth information.",
+        topics: ["Python", "Pytorch", "OpenCV", "Open3D", "Point Clouds", "Numpy", "Scipy"],
+        links: [
+            { "label": "Repository", "href": "https://github.com/marcopetri98/TripletRansac_Python_IACV"}
+        ]
+    },
+    {
+        title: "Hungry Birds",
+        institution: "Politecnico di Milano",
+        role: "Master Student",
+        period: "2022",
+        description:
+            "HungryBirds is a sophisticated, high-performance real-time 3D rendering engine architected from the ground up utilizing C++ and the Vulkan API to showcase a complete modern computer graphics pipeline. This project integrates advanced rendering techniques such as custom coordinate transformations for complex 3D object manipulation alongside the implementation of high-fidelity lighting models and texture mapping for realistic surface shading. The engine provides deep technical insight into the Vulkan rendering workflow, including the orchestration of command buffers and descriptor sets to maximize hardware efficiency while maintaining a modular, cross-platform code structure.",
+        topics: ["C++", "Vulkan", "Computer Graphics", "Shaders"],
+        links: [
+            { "label": "Repository", "href": "https://github.com/marcopetri98/HungryBirds_Vulkan_CG"}
+        ]
+    },
+    {
+        title: "The Abyss",
+        institution: "Politecnico di Milano",
+        role: "Master Student",
+        period: "2021",
+        description:
+            "The Abyss is an adventure game where the player will coordinate a group of characters in order to explore a huge dungeon that goes down towards the center of the earth. The core of the game is the possibility to create your own team of three characters that will explore the dungeon and fight the monsters that inhabit it. Only by finding a good synergy between the characters in the team the player will be able to defeat the enemies and reach the end of the abyss.",
+        topics: ["C#", "Unity", "Gameplay development", "Combat development", "Player Pathing"],
+        links: [
+            { "label": "Project page", "href": "https://polimi-game-collective.itch.io/the-abyss"}
+        ]
+    },
+    {
+        title: "Leaves classification and time series forecasting with Deep Learning",
+        institution: "Politecnico di Milano",
+        role: "Master Student",
+        period: "2021",
+        description:
+            "During a university course challenge, I collaborated with peers to apply advanced deep learning techniques that consistently exceeded baseline benchmarks. As part of this effort, we fine-tuned an EfficientNet model using TensorFlow-Keras for a 14-class image classification task, successfully boosting accuracy from approximately 80% to 90% by utilizing data augmentation and ensembling it with a custom neural network. Beyond computer vision, we also designed and developed a custom deep learning model in TensorFlow-Keras for multivariate time series forecasting across seven distinct variables, ultimately achieving strong and robust predictive performance.",
+        topics: ["Python", "Tensorflow", "Keras", "Numpy"],
+    },
+    {
+        title: "Prediction of the implicit matrix for recommendation systems",
+        institution: "Politecnico di Milano",
+        role: "Master Student",
+        period: "2021",
+        description:
+            "Working in a two-person team for a university course challenge, we tested multiple collaborative filtering algorithms, including RP3Beta and P3Alpha, by leveraging the LightFM, Implicit, and Scikit-learn libraries. To ensure a rigorous evaluation of our recommender system models, we implemented k-fold cross-validation using Mean Average Precision (MAP) as the primary metric. Additionally, we experimented with dimensionality reduction via PCA to specifically assess its impact on prediction accuracy and optimize the final model's performance.",
+        topics: ["Python", "Scikit-learn", "Scipy", "Implicit", "LightFM", "Skopt", "Numpy", "Pandas"],
+    },
+    {
+        title: "Marketing application",
+        institution: "Politecnico di Milano",
+        role: "Master Student",
+        period: "2021",
+        description:
+            "Working within a four-member university project team, we designed and developed a Java EE web application that integrated entity-relationship mappings and persistence management to ensure robust data handling. To bolster data integrity and enforce secure, role-based database operations, we implemented complex SQL triggers that provided an essential layer of access control. On the front end, we utilized Thymeleaf to create dynamic user interfaces, ensuring a clear and engaging experience for users. Throughout the project, I coordinated closely with my teammates to develop and integrate these features, managing our tasks informally to successfully meet our collective goals.",
+        topics: ["Java", "Jakarta", "Maven", "Thymeleaf", "SQL"],
+        links: [
+            { "label": "Repository", "href": "https://github.com/marcopetri98/MarketingApp_Java_DB2"}
+        ]
+    },
+    {
+        title: "Software Requirements analysis",
+        institution: "Politecnico di Milano",
+        role: "Master Student",
+        period: "2020",
+        description:
+            "Working within a three-member team, we conducted a comprehensive requirements analysis for a queuing application specifically designed to manage customer flow in physical stores during the COVID-19 pandemic. we were responsible for designing the system architecture and modeling the infrastructure through various UML diagrams, including use case and sequence diagrams. Our collaboration culminated in the delivery of a complete design document, demonstrating a strong proficiency in professional software engineering analysis and design.",
+        topics: ["Requirement elicitation", "Technical document design", "UML"],
+        links: [
+            { "label": "Repository", "href": "https://github.com/marcopetri98/CustomersLineUp_SWENG2"}
+        ]
+    },
+    {
+        title: "Money transfer application",
+        institution: "Politecnico di Milano",
+        role: "Bachelor Student",
+        period: "2020",
+        description:
+            "In this university project, I developed a Java EE banking web application that utilized a dual front-end architecture, combining a Thymeleaf-based server-rendered interface with a dynamic client-side interface built in vanilla JavaScript to minimize backend load. I designed the comprehensive database schema using entity-relationship diagrams and implemented the mappings via Java EE to ensure robust data persistence. Additionally, I enabled internationalization support, significantly enhancing the application's usability across diverse languages and regions without the overhead of external front-end frameworks.",
+        topics: ["Java", "Jakarta", "Maven", "Thymeleaf", "SQL", "Javascript", "HTML", "CSS"],
+        links: [
+            { "label": "Repository", "href": "https://github.com/marcopetri98/MoneyTransfer_Java_TIW"}
+        ]
+    },
+    {
+        title: "Santorini Java Game",
+        institution: "Politecnico di Milano",
+        role: "Bachelor Student",
+        period: "2020",
+        description:
+            "Working as part of a three-member team, I co-developed a Java-based multiplayer board game from scratch, implementing all core components including networking, concurrency, and game logic. We applied the MVC design pattern to build dual client interfaces, comprising both a JavaFX GUI and a CLI, to ensure a clean separation of concerns and long-term maintainability. To guarantee the application's reliability and correctness, we designed and executed comprehensive JUnit test suites that achieved over 90% code coverage. Throughout the development lifecycle, we leveraged Maven for dependency management and Git for version control, facilitating consistent builds and seamless collaboration within the team.",
+        topics: ["Java", "Java FX", "UML", "Maven", "Unit Testing"],
+        links: [
+            { "label": "Repository", "href": "https://github.com/marcopetri98/Santorini_JavaGame_INGSW"}
+        ]
+    },
+    {
+        title: "Algorithms and data structures course project",
+        institution: "Politecnico di Milano",
+        role: "Bachelor Student",
+        period: "2019",
+        description:
+            "I engineered a performant C data structure capable of efficiently managing asymmetric bidirectional relationships among hundreds of thousands of entities in a highly scalable manner. By integrating graph traversal techniques with Red-Black tree indexing, I achieved O(m log n) time complexity for all key operations, including adding and deleting entities and relationships, as well as performing max and min queries, dramatically outperforming the naive O(n²) approaches that quickly became impractical at this scale. This work was completed as a solo academic project, with a strong emphasis on advanced data structures and algorithmic efficiency while operating under realistic, large-scale constraints.",
+        topics: ["C", "Algorithms", "Data Structures"],
+    },
+];
+---
+
+<ArticlePortfolio
+    title="Curriculum"
+    description="Marco Petri's curriculum."
+    intro={intro}
+>
+    <ExperiencesSection title="Work Experiences" experiences={work} />
+    <ExperiencesSection title="Education" experiences={education} />
+    <SkillsSection groups={skillGroups} />
+    <ExperiencesSection title="Projects" experiences={projects} />
+</ArticlePortfolio>
