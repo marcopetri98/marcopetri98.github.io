@@ -1,0 +1,43 @@
+---
+import { getCollection } from "astro:content";
+import ArticleLanding from "../../../layouts/ArticleLanding.astro";
+import { SITE_DESCRIPTION, SITE_TITLE, COLLECTIONS } from "../../../consts";
+import { getArticleLandingData } from "../../../utils/articleLanding";
+
+export function getStaticPaths() {
+    const paths = [];
+    for (const [collection, data] of Object.entries(COLLECTIONS)) {
+        for (const subcollection of Object.keys(data.subcollections)) {
+            paths.push({ params: { collection, subcollection } });
+        }
+    }
+    return paths;
+}
+const { collection, subcollection } = Astro.params;
+
+const collectionKey = collection as keyof typeof COLLECTIONS;
+const subcollections = COLLECTIONS[collectionKey].subcollections as Record<string, any>;
+const { heroTitle, heroText } = subcollections[subcollection as string];
+
+var featuredPostCount = 4;
+var numberOfLastPosts = 10;
+
+const allPosts = await getCollection(collection);
+const posts = allPosts.filter((post) => post.id.startsWith(`${subcollection}/`));
+
+const { featuredPosts, latestPosts } = getArticleLandingData(
+    posts,
+    featuredPostCount,
+    numberOfLastPosts,
+);
+---
+
+<ArticleLanding
+    title={SITE_TITLE}
+    description={SITE_DESCRIPTION}
+    heroTitle={heroTitle}
+    heroText={heroText}
+    featuredPosts={featuredPosts}
+    latestPosts={latestPosts}
+    numberOfLastPosts={numberOfLastPosts}
+/>

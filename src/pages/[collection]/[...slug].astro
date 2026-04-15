@@ -1,0 +1,36 @@
+---
+import { type CollectionEntry, getCollection, render } from "astro:content";
+import BlogPost from "../../layouts/BlogPost.astro";
+
+export async function getStaticPaths() {
+    // 1. Fetch both collections
+    const blogPosts = await getCollection("blog");
+    const opinionPosts = await getCollection("opinions");
+
+    // 2. Map blog paths, explicitly setting collection to 'blog'
+    const blogPaths = blogPosts.map((post) => ({
+        params: { collection: "blog", slug: post.id },
+        props: { post },
+    }));
+
+    // 3. Map opinions paths, explicitly setting collection to 'opinions'
+    const opinionPaths = opinionPosts.map((post) => ({
+        params: { collection: "opinions", slug: post.id },
+        props: { post },
+    }));
+
+    // 4. Return everything combined
+    return [...blogPaths, ...opinionPaths];
+}
+
+type Props = {
+    post: CollectionEntry<"blog"> | CollectionEntry<"opinions">;
+};
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+---
+
+<BlogPost {...post.data}>
+    <Content />
+</BlogPost>

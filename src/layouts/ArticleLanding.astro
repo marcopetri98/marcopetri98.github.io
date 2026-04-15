@@ -362,7 +362,7 @@ const {
 					featuredPosts.length > 0 ? (
 						<div class="featured-grid">
 							{featuredPosts.map((post) => (
-								<a class="featured-card" href={`/blog/${post.id}/`}>
+								<a class="featured-card" href={`/${post.collection}/${post.id}/`}>
 									{post.data.heroImage && (
 										<div class="card-media">
 											<Image src={post.data.heroImage} alt={post.data.title} width={1200} height={750} />

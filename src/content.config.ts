@@ -21,4 +21,5 @@ function createStandardCollection(folderName: string) {
 // 2. Explicitly bind them to names (Astro requires this)
 export const collections = { 
     blog: createStandardCollection('blog'),
+    opinions: createStandardCollection('opinions'),
 };

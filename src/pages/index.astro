@@ -7,7 +7,10 @@ import { getArticleLandingData } from "../utils/articleLanding";
 var featuredPostCount = 4;
 var numberOfLastPosts = 10;
 
-const posts = await getCollection("blog");
+const blogPosts = await getCollection("blog");
+const opinionPosts = await getCollection("opinions");
+const posts = [...blogPosts, ...opinionPosts];
+
 const { featuredPosts, latestPosts } = getArticleLandingData(
 	posts,
 	featuredPostCount,
