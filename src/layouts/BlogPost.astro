@@ -10,7 +10,7 @@ interface Props {
 	description: string;
 	pubDate?: Date;
 	updatedDate?: Date;
-	heroImage?: string;
+	heroImage?: ImageMetadata | string;
 }
 
 const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
@@ -70,7 +70,7 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 							<Image
 								width={1020}
 								height={510}
-								src={heroImage}
+								src={heroImage as ImageMetadata}
 								alt=""
 							/>
 						)
