@@ -1,13 +1,14 @@
 ---
 interface Props {
     title: string;
+    url: string;
 }
 
-const { title } = Astro.props;
+const { title, url } = Astro.props;
 ---
 
 <div class="nav-dropdown">
-    <button class="nav-item dropdown-trigger">{title}</button>
+    <a class="nav-item dropdown-trigger" href={url}>{title}</a>
     <!-- Invisible bridge to prevent hover gap -->
     <div class="dropdown-bridge"></div>
     <div class="dropdown-menu">
