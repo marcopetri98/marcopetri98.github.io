@@ -1,5 +1,5 @@
 ---
-import { getCollection } from "astro:content";
+import { getCollection, type CollectionKey } from "astro:content";
 import ArticleLanding from "../../layouts/ArticleLanding.astro";
 import { SITE_DESCRIPTION, SITE_TITLE, COLLECTIONS } from "../../consts";
 import { getArticleLandingData } from "../../utils/articleLanding";
@@ -19,7 +19,7 @@ const { heroTitle, heroText } = COLLECTIONS[collectionKey];
 var featuredPostCount = 4;
 var numberOfLastPosts = 10;
 
-const posts = await getCollection(collection);
+const posts = await getCollection(collection as CollectionKey);
 const { featuredPosts, latestPosts } = getArticleLandingData(
 	posts,
 	featuredPostCount,

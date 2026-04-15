@@ -1,5 +1,5 @@
 ---
-import { getCollection } from "astro:content";
+import { getCollection, type CollectionKey } from "astro:content";
 import ArticleLanding from "../../../layouts/ArticleLanding.astro";
 import { SITE_DESCRIPTION, SITE_TITLE, COLLECTIONS } from "../../../consts";
 import { getArticleLandingData } from "../../../utils/articleLanding";
@@ -22,7 +22,7 @@ const { heroTitle, heroText } = subcollections[subcollection as string];
 var featuredPostCount = 4;
 var numberOfLastPosts = 10;
 
-const allPosts = await getCollection(collection);
+const allPosts = await getCollection(collection as CollectionKey);
 const posts = allPosts.filter((post) => post.id.startsWith(`${subcollection}/`));
 
 const { featuredPosts, latestPosts } = getArticleLandingData(
