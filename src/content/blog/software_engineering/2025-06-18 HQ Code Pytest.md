@@ -2,7 +2,7 @@
 title: 'High-Quality Code with PyTest: Managing Complexity in Python Applications'
 description: 'Advanced PyTest guide for testing complex Python apps: structure tests, use JSON data, manage mocks and dependencies for clean, maintainable code.'
 pubDate: 'Jun 18 2025'
-heroImage: '../../assets/Computer-with-python.png'
+heroImage: '../../../assets/Computer-with-python.png'
 ---
 
 In this article, I am going to discuss some of the best practices for PyTest to maintain high-quality source code inside complex applications. This article assumes a good grasp of the Python programming language with versions 3.10+ and of the PyTest framework. This article will neither go through the basics of PyTest nor the basics or advanced features of Python 3.10+. However, you can find pretty good and interesting articles online, including here on Medium. And always online you can find the [GitHub Repository](https://github.com/marcopetri98/article-medium-pytest-code-quality) with all the codes of this post. We will not be discussing fixtures, performance tests, plugins, SonarQube, linting, or other tools; we will see some practices that will enhance your tests. In order to simplify reading, I’d like to structure here a table of contents:
