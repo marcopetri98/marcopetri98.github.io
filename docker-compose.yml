@@ -1,0 +1,24 @@
+services:
+    astro:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        hostname: website
+        container_name: website
+        image: website:latest
+
+        volumes:
+            - .:/workspace
+            - /workspace/node_modules
+            - /workspace/.vscode
+            - /workspace/.astro
+
+        ports:
+            - "4321:4321"
+
+        environment:
+            - CHOKIDAR_USEPOLLING=true
+            - CHOKIDAR_INTERVAL=100
+
+        working_dir: /workspace
+        command: /bin/sh -c "npm install && npm run dev -- --host"
