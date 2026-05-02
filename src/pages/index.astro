@@ -1,8 +1,38 @@
 ---
 import { getCollection } from "astro:content";
-import ArticleLanding from "../layouts/ArticleLanding.astro";
+import BaseHead from "../components/BaseHead.astro";
+import Footer from "../components/Footer.astro";
+import Header from "../components/Header.astro";
+import LatestArticlesSection from "../components/LatestArticlesSection.astro";
 import { SITE_DESCRIPTION, SITE_TITLE } from "../consts";
 import { getArticleLandingData } from "../utils/articleLanding";
+
+const title = "PhD Student in Information Technology and Software Engineer";
+const introduction = [
+	`I am a PhD student and deep learning researcher at Politecnico di Milano, and a professional software engineer. Currently, I am pursuing a Doctor of Philosophy, a research experience lasting three to four years. My interests span both basic and applied research, specifically targeting <a href="https://euraxess.ec.europa.eu/career-development/researchers/manual-scientific-entrepreneurship/major-steps/trl" target="_blank">Technology Readiness Levels</a> 2 to 4.`,
+	"Regarding research, I am currently interested in representation learning and the use of embeddings for prediction. Specifically, I am exploring Joint Embedding Predictive Architectures and their applications to various domains, including robotics and computer vision.",
+];
+
+const researchInterests = [
+	{
+		title: "JEPA",
+		description:
+			"I am interested in designing ways to learn more effective and dense representations in neural network training. I find Joint Embedding Predictive Architectures to be a promising approach to learning.",
+	},
+	{
+		title: "Robotics",
+		description:
+			"I am interested in how artificial intelligence can enable a robot to move and perform various tasks, from picking up objects to navigating freely through space. In this context, I find world models particularly interesting.",
+	},
+	{
+		title: "Time series",
+		description:
+			"I am interested in studying various phenomena that exhibit strong temporal dependencies and patterns. Economic, industrial, and many other types of data, along with their underlying generation processes, are profoundly interesting.",
+	},
+];
+
+const portraitImage = "./public/potrait.png";
+const portraitAlt = "Portrait of Marco Petri";
 
 var featuredPostCount = 4;
 var numberOfLastPosts = 10;
@@ -18,12 +48,237 @@ const { featuredPosts, latestPosts } = getArticleLandingData(
 );
 ---
 
-<ArticleLanding
-	title={SITE_TITLE}
-	description={SITE_DESCRIPTION}
-	heroTitle="My thoughts, posts and curriculum"
-	heroText="This is my personal website. Here, I share my background, CV, publications, and experiences that define me as a computer scientist. You'll also find blog posts where I write about a wide range of topics, particularly artificial intelligence and software engineering."
-	featuredPosts={featuredPosts}
-	latestPosts={latestPosts}
-	numberOfLastPosts={numberOfLastPosts}
-/>
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
+		<style>
+			:root {
+				--home-bg: #f6f3ec;
+				--home-surface: #fffdf9;
+				--home-ink: #14213d;
+				--home-muted: #5f6b7a;
+				--home-border: rgba(20, 33, 61, 0.12);
+				--home-accent: #8f3b2e;
+				--home-accent-soft: rgba(143, 59, 46, 0.08);
+			}
+
+			body {
+				background:
+					radial-gradient(circle at top left, rgba(143, 59, 46, 0.08), transparent 28%),
+					linear-gradient(180deg, #fbfaf7 0%, var(--home-bg) 100%);
+			}
+
+			main.homepage {
+				width: min(1120px, calc(100% - 2rem));
+				margin: 0 auto;
+				padding: 2rem 0 4rem;
+			}
+
+			section {
+				margin-bottom: 2rem;
+			}
+
+			.hero {
+				display: grid;
+				grid-template-columns: minmax(220px, 320px) minmax(0, 1fr);
+				gap: 2rem;
+				align-items: center;
+				padding: 2rem;
+				border: 1px solid var(--home-border);
+				border-radius: 28px;
+				background: rgba(255, 253, 249, 0.92);
+				box-shadow: 0 28px 70px rgba(20, 33, 61, 0.08);
+			}
+
+			.hero-portrait,
+			.hero-portrait-placeholder {
+				aspect-ratio: 4 / 5;
+				width: 100%;
+				border-radius: 24px;
+				border: 1px solid var(--home-border);
+				background:
+					linear-gradient(145deg, rgba(143, 59, 46, 0.14), rgba(20, 33, 61, 0.06)),
+					var(--home-surface);
+				box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.65);
+			}
+
+			.hero-portrait {
+				display: block;
+				object-fit: cover;
+			}
+
+			.hero-portrait-placeholder {
+				display: grid;
+				place-items: center;
+				color: var(--home-accent);
+				font-size: clamp(2.5rem, 6vw, 4.5rem);
+				font-weight: 700;
+				letter-spacing: 0.08em;
+			}
+
+			.hero-copy {
+				display: grid;
+				gap: 1rem;
+			}
+
+			.hero-kicker {
+				margin: 0;
+				color: var(--home-accent);
+				font-size: 0.8rem;
+				font-weight: 700;
+				letter-spacing: 0.18em;
+				text-transform: uppercase;
+			}
+
+			.hero h1 {
+				margin: 0;
+				font-size: clamp(2.8rem, 5vw, 4.8rem);
+				line-height: 0.95;
+				letter-spacing: -0.04em;
+				color: var(--home-ink);
+			}
+
+			.hero-subtitle {
+				margin: 0;
+				color: var(--home-muted);
+				font-size: 1.15rem;
+				line-height: 1.7;
+			}
+
+			.hero-intro {
+				display: grid;
+				gap: 0.9rem;
+				max-width: 60ch;
+			}
+
+			.hero-intro p {
+				margin: 0;
+				color: var(--home-muted);
+				font-size: 1rem;
+				line-height: 1.8;
+			}
+
+			.section-panel {
+				padding: 1.75rem;
+				border: 1px solid var(--home-border);
+				border-radius: 28px;
+				background: rgba(255, 253, 249, 0.88);
+				box-shadow: 0 22px 52px rgba(20, 33, 61, 0.06);
+			}
+
+			.section-heading {
+				margin-bottom: 1.4rem;
+			}
+
+			.section-heading h2 {
+				margin: 0 0 0.35rem;
+				font-size: clamp(1.8rem, 3vw, 2.5rem);
+				color: var(--home-ink);
+			}
+
+			.section-heading p {
+				margin: 0;
+				color: var(--home-muted);
+				line-height: 1.7;
+			}
+
+			.interests-grid {
+				display: grid;
+				grid-template-columns: repeat(3, minmax(0, 1fr));
+				gap: 1rem;
+			}
+
+			.interest-card {
+				padding: 1.25rem;
+				border: 1px solid var(--home-border);
+				border-radius: 20px;
+				background: var(--home-surface);
+			}
+
+			.interest-card h3 {
+				margin: 0 0 0.65rem;
+				font-size: 1.15rem;
+				color: var(--home-ink);
+			}
+
+			.interest-card p {
+				margin: 0;
+				color: var(--home-muted);
+				line-height: 1.75;
+			}
+
+			@media (max-width: 900px) {
+				.hero {
+					grid-template-columns: 1fr;
+				}
+
+				.interests-grid {
+					grid-template-columns: 1fr;
+				}
+			}
+
+			@media (max-width: 720px) {
+				main.homepage {
+					width: calc(100% - 1rem);
+					padding-top: 1rem;
+				}
+
+				.hero,
+				.section-panel {
+					padding: 1.25rem;
+					border-radius: 22px;
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<Header />
+		<main class="homepage">
+			<section class="hero" aria-labelledby="home-title">
+				{
+					portraitImage ? (
+						<img class="hero-portrait" src={portraitImage} alt={portraitAlt} />
+					) : (
+						<div class="hero-portrait-placeholder" aria-label="Portrait placeholder">MP</div>
+					)
+				}
+
+				<div class="hero-copy">
+					<p class="hero-kicker">Homepage</p>
+					<h1 id="home-title">{SITE_TITLE}</h1>
+					<p class="hero-subtitle">{title}</p>
+					<div class="hero-intro">
+						{introduction.map((html) => <p set:html={html} />)}
+					</div>
+				</div>
+			</section>
+
+			<section class="section-panel" aria-labelledby="research-interests">
+				<div class="section-heading">
+					<h2 id="research-interests">Research Interests</h2>
+				</div>
+
+				<div class="interests-grid">
+					{researchInterests.map((interest) => (
+						<article class="interest-card">
+							<h3>{interest.title}</h3>
+							<p>{interest.description}</p>
+						</article>
+					))}
+				</div>
+			</section>
+
+			<div class="section-panel">
+				<LatestArticlesSection
+					latestPosts={latestPosts}
+					title="Latest Posts"
+					description={`The ${numberOfLastPosts} most recent posts, including both tech and opinions.`}
+					emptyMessage="There are no recent posts to show yet."
+					variant="home"
+				/>
+			</div>
+		</main>
+		<Footer />
+	</body>
+</html>
