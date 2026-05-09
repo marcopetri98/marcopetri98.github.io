@@ -24,7 +24,9 @@ const { title = "Skills", groups } = Astro.props;
                     <article>
                         <h3>{group.name}</h3>
                         <ul class="skill-tags">
-                            {group.skills.map((skill) => <li>{skill}</li>)}
+                            {group.skills.map((skill) => (
+                                <li>{skill}</li>
+                            ))}
                         </ul>
                     </article>
                 </li>
@@ -35,7 +37,8 @@ const { title = "Skills", groups } = Astro.props;
 
 <style>
     .skills {
-        width: 720px;
+        width: 100%;
+        max-width: 720px;
         margin: 0 auto;
     }
 

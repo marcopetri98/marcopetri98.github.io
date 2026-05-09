@@ -88,7 +88,9 @@ const { title = "Experiences", experiences } = Astro.props;
                         {experience.links && experience.links.length > 0 && (
                             <div class="experience-links">
                                 {experience.links.map((link) => (
-                                    <a href={link.href} target="_blank">{link.label}</a>
+                                    <a href={link.href} target="_blank">
+                                        {link.label}
+                                    </a>
                                 ))}
                             </div>
                         )}
@@ -101,7 +103,8 @@ const { title = "Experiences", experiences } = Astro.props;
 
 <style>
     .experience {
-        width: 720px;
+        width: 100%;
+        max-width: 720px;
         margin: 0 auto;
     }
 
