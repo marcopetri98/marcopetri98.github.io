@@ -40,6 +40,20 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 				margin: auto;
 				padding: 1em;
 				color: rgb(var(--gray-dark));
+				font-size: clamp(
+					0.95rem,
+					2vw + 0.5rem,
+					1rem
+				);
+			}
+			.prose :global(pre) {
+				max-width: 100%;
+				overflow-x: auto;
+			}
+			.prose :global(pre),
+			.prose :global(code) {
+				font-size: clamp(0.75rem, 2.5vw, 0.95em);
+				word-break: break-word;
 			}
 			.title {
 				margin-bottom: 1em;
@@ -49,6 +63,8 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 			}
 			.title h1 {
 				margin: 0 0 0.5em 0;
+				font-size: clamp(1.5rem, 5vw, 3rem);
+				line-height: 1.2;
 			}
 			.date {
 				margin-bottom: 0.5em;
