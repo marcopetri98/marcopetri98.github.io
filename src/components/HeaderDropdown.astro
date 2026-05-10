@@ -106,7 +106,7 @@ const { title, url } = Astro.props;
         visibility: visible;
     }
 
-    @media (max-width: 768px) {
+    @media (max-width: 1024px) {
         .nav-item {
             width: 100%;
             padding: 0.75rem 0;
@@ -175,7 +175,7 @@ const { title, url } = Astro.props;
         const trigger = dropdown.querySelector(".dropdown-trigger");
         if (trigger) {
             trigger.addEventListener("click", (e: Event) => {
-                if (window.innerWidth <= 768) {
+                if (window.innerWidth <= 1024) {
                     e.preventDefault();
                     dropdown.classList.toggle("active");
                 }
