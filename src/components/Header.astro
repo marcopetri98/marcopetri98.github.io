@@ -39,21 +39,29 @@ import SocialLinks from "./SocialLinks.astro";
 				<HeaderSimple title="/teaching">Teaching</HeaderSimple>
 				<HeaderSimple title="/curriculum">CV</HeaderSimple>
 
-				<HeaderDropdown title="Tech Blog" url="/blog">
-					<a href="/blog/research">Research</a>
-					<a href="/blog/software_engineering">Software Engineering</a
-					>
-					<a href="/blog/machine_learning">Machine Learning</a>
-					<a href="/blog/devops">DevOps</a>
-					<a href="/blog/projects">Projects</a>
-					<a href="/blog/productivity">Productivity</a>
-				</HeaderDropdown>
-
-				<HeaderDropdown title="Opinions" url="/opinions">
-					<a href="/opinions/life">Life</a>
-					<a href="/opinions/economy">Economy</a>
-					<a href="/opinions/politics-society">Politics and society</a
-					>
+				<HeaderDropdown title="Blog" url="/blog" mega={true}>
+					<div class="mega-menu-grid">
+						<div class="mega-column">
+							<a href="/blog"><h4>Tech Blog</h4></a>
+							<a href="/blog/research">Research</a>
+							<a href="/blog/software_engineering"
+								>Software Engineering</a
+							>
+							<a href="/blog/machine_learning">Machine Learning</a
+							>
+							<a href="/blog/devops">DevOps</a>
+							<a href="/blog/projects">Projects</a>
+							<a href="/blog/productivity">Productivity</a>
+						</div>
+						<div class="mega-column">
+							<a href="/opinions"><h4>Opinions</h4></a>
+							<a href="/opinions/life">Life</a>
+							<a href="/opinions/economy">Economy</a>
+							<a href="/opinions/politics-society"
+								>Politics and society</a
+							>
+						</div>
+					</div>
 				</HeaderDropdown>
 			</div>
 
@@ -178,6 +186,36 @@ import SocialLinks from "./SocialLinks.astro";
 			border-top: 1px solid #e5e5e5;
 			display: flex;
 			justify-content: center;
+		}
+	}
+</style>
+
+<style is:global>
+	.mega-menu-grid {
+		display: flex;
+		gap: 2.5rem;
+	}
+
+	.mega-column h4 {
+		margin: 0 0 0.5rem 0.5rem;
+		font-size: 0.9rem;
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
+		color: rgb(var(--gray));
+		border-bottom: 2px solid var(--accent);
+		padding-bottom: 0.25rem;
+		display: inline-block;
+	}
+
+	@media (max-width: 1024px) {
+		.mega-menu-grid {
+			flex-direction: column;
+			gap: 1.5rem;
+			padding-top: 0.5rem;
+		}
+
+		.mega-column h4 {
+			margin-left: 0;
 		}
 	}
 </style>

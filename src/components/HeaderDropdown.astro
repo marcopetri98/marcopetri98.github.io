@@ -2,16 +2,17 @@
 interface Props {
     title: string;
     url: string;
+    mega?: boolean;
 }
 
-const { title, url } = Astro.props;
+const { title, url, mega = false } = Astro.props;
 ---
 
 <div class="nav-dropdown">
     <a class="nav-item dropdown-trigger" href={url}>{title}</a>
     <!-- Invisible bridge to prevent hover gap -->
     <div class="dropdown-bridge"></div>
-    <div class="dropdown-menu">
+    <div class={`dropdown-menu ${mega ? "mega" : ""}`}>
         <slot />
     </div>
 </div>
@@ -106,6 +107,11 @@ const { title, url } = Astro.props;
         visibility: visible;
     }
 
+    .dropdown-menu.mega {
+        min-width: max-content;
+        padding: 1.5rem;
+    }
+    
     @media (max-width: 1024px) {
         .nav-item {
             width: 100%;
@@ -137,17 +143,28 @@ const { title, url } = Astro.props;
             background: #f9f9f9;
         }
 
-        .nav-dropdown:hover .dropdown-menu,
+        .dropdown-menu.mega {
+            padding: 0;
+        }
+        
         .nav-dropdown.active .dropdown-menu {
             opacity: 1;
             visibility: visible;
-            max-height: 500px;
+            max-height: 800px;
             padding: 0.5rem 0 0.5rem 2rem;
+        }
+
+        .nav-dropdown.active .dropdown-menu.mega {
+            padding: 0.5rem 0 0.5rem 1rem;
         }
     }
 </style>
 
 <style is:global>
+    .dropdown-menu.mega {
+        /* Optional global override */
+    }
+
     .dropdown-menu a {
         display: block;
         padding: 0.75rem 1.5rem;
@@ -158,6 +175,22 @@ const { title, url } = Astro.props;
         transition:
             background-color 0.2s ease,
             color 0.2s ease;
+    }
+
+    .dropdown-menu.mega a {
+        padding: 0.4rem 0.75rem;
+        margin-bottom: 0.2rem;
+        border-radius: 4pxne;
+        font-size: 0.9rem;
+        font-weight: 400;
+        transition:
+            background-color 0.2s ease,
+            color 0.2s ease;
+    }
+
+    .dropdown-menu.mega a:has(> h4) {
+        padding: 0;
+        margin-bottom: 0;
     }
 
     .dropdown-menu a:hover {
