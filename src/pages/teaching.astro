@@ -1,14 +1,29 @@
 ---
+import ExperiencesSection from "../components/ExperiencesSection.astro";
 import ArticlePortfolio from "../layouts/ArticlePortfolio.astro";
 
-const intro = `Teaching is a fundamental part of a PhD programme and of a researcher. Here I list every teaching 
-activity I completed or I am conducting.
+const intro = `Teaching is a fundamental part of a PhD programme and of a researcher. Obviously,
+all teaching activities start with an assistantship position of Teaching Assistant. Here I list
+every teaching activity I completed or I am conducting.`;
 
-For the moment, I am waiting to start teaching. Stay tuned.`;
+const teaching = [
+    {
+        title: "Principles of Software Engineering and Data Bases",
+        institution: "Vita-Salute San Raffaele University",
+        period: "2026 Winter",
+        description: [
+            "Databases: Relational algebra, SQL, SQLite, ER diagrams, Logical design, Normalization",
+            "Software Engineering: Inheritance, SOLID principles, Design patterns, Concurrency, Testing"
+        ],
+        topics: [],
+    },
+];
 ---
 
 <ArticlePortfolio
     title="Teaching"
     description="A text-first page that introduces teaching work before listing structured teaching activities."
     intro={intro}
-/>
+>
+    <ExperiencesSection title="Teaching Assistant activities" experiences={teaching} />
+</ArticlePortfolio>
