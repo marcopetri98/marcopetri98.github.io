@@ -1,0 +1,292 @@
+---
+import { ARTICLE_TAGS, type ArticleTag } from "../consts";
+import FormattedDate from "./FormattedDate.astro";
+
+interface Article {
+    title: string;
+    description: string;
+    date: Date;
+    href: string;
+    tags: ArticleTag[];
+}
+
+interface Props {
+    articles: Article[];
+    emptyMessage?: string;
+}
+
+const { articles, emptyMessage = "There are no articles yet." } = Astro.props;
+
+// Only the tags used by at least one article are offered as filters, in the
+// order of the vocabulary so the bar stays stable as articles are added.
+const tagCounts = new Map<ArticleTag, number>();
+for (const article of articles) {
+    for (const tag of article.tags) {
+        tagCounts.set(tag, (tagCounts.get(tag) ?? 0) + 1);
+    }
+}
+const filterTags = (Object.keys(ARTICLE_TAGS) as ArticleTag[]).filter((tag) =>
+    tagCounts.has(tag),
+);
+---
+
+<div class="article-grid" data-article-grid>
+    {
+        filterTags.length > 0 && (
+            <div class="article-filters" role="group" aria-label="Filter articles by tag">
+                <button
+                    type="button"
+                    class="article-filter"
+                    data-tag-filter=""
+                    aria-pressed="true"
+                >
+                    All <span class="article-filter-count">{articles.length}</span>
+                </button>
+                {filterTags.map((tag) => (
+                    <button
+                        type="button"
+                        class="article-filter"
+                        data-tag-filter={tag}
+                        aria-pressed="false"
+                    >
+                        {ARTICLE_TAGS[tag]}
+                        <span class="article-filter-count">{tagCounts.get(tag)}</span>
+                    </button>
+                ))}
+            </div>
+        )
+    }
+
+    {
+        articles.length > 0 ? (
+            <ul class="articles">
+                {articles.map((article) => (
+                    <li class="article-card" data-tags={article.tags.join(" ")}>
+                        <article>
+                            <p class="article-date">
+                                <FormattedDate date={article.date} />
+                            </p>
+                            <h2 class="article-title">
+                                <a href={article.href}>{article.title}</a>
+                            </h2>
+                            <p class="article-description">{article.description}</p>
+                        </article>
+
+                        <div class="article-footer">
+                            {article.tags.length > 0 && (
+                                <ul class="article-tags">
+                                    {article.tags.map((tag) => (
+                                        <li>{ARTICLE_TAGS[tag]}</li>
+                                    ))}
+                                </ul>
+                            )}
+                            <span class="article-read" aria-hidden="true">
+                                Read →
+                            </span>
+                        </div>
+                    </li>
+                ))}
+            </ul>
+        ) : (
+            <p class="article-empty">{emptyMessage}</p>
+        )
+    }
+</div>
+
+<style>
+    .article-filters {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.45rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .article-filter {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.3rem 0.85rem;
+        border: 1px solid rgba(var(--section-dark), 0.8);
+        border-radius: 999px;
+        background: transparent;
+        color: var(--accent);
+        font: inherit;
+        font-size: 0.85rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition:
+            background-color 0.2s ease,
+            border-color 0.2s ease,
+            color 0.2s ease;
+    }
+
+    .article-filter:hover,
+    .article-filter:focus-visible {
+        background: rgba(var(--section-light), 0.65);
+        color: var(--accent-dark);
+    }
+
+    .article-filter[aria-pressed="true"] {
+        border-color: var(--accent);
+        background: var(--accent);
+        color: rgb(var(--on-accent));
+    }
+
+    .article-filter-count {
+        font-size: 0.75rem;
+        font-weight: 400;
+        opacity: 0.75;
+    }
+
+    .articles {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 1rem;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+
+    .article-card {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        gap: 0.9rem;
+        padding: 1rem 1.1rem;
+        border: 1px solid rgba(var(--section-dark), 0.6);
+        border-radius: 12px;
+        transition: border-color 0.2s ease;
+    }
+
+    /* The card sets its own display, which would override the hidden attribute
+       used by the tag filter. */
+    .article-card[hidden] {
+        display: none;
+    }
+
+    .article-card:hover,
+    .article-card:focus-within {
+        border-color: var(--accent);
+    }
+
+    .article-date {
+        margin: 0 0 0.3rem;
+        color: rgb(var(--gray));
+        font-size: 0.8rem;
+        font-weight: 700;
+        letter-spacing: 0.03em;
+    }
+
+    .article-title {
+        margin: 0;
+        font-size: 1.05rem;
+        line-height: 1.4;
+    }
+
+    .article-title a {
+        color: rgb(var(--gray-dark));
+        text-decoration: none;
+    }
+
+    /* Stretches the title link over the whole card, so the card is clickable. */
+    .article-title a::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+    }
+
+    .article-card:hover .article-title a {
+        color: var(--accent);
+    }
+
+    .article-description {
+        margin: 0.45rem 0 0;
+        color: rgb(var(--gray-dark));
+        font-size: 0.9rem;
+        line-height: 1.6;
+    }
+
+    .article-footer {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.6rem;
+    }
+
+    .article-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.3rem;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+
+    .article-tags li {
+        padding: 0.05rem 0.5rem;
+        border-radius: 999px;
+        background: rgba(var(--section-light), 0.65);
+        color: var(--accent-dark);
+        font-size: 0.75rem;
+    }
+
+    .article-read {
+        margin-left: auto;
+        color: var(--accent);
+        font-size: 0.85rem;
+        font-weight: 600;
+    }
+
+    .article-empty {
+        color: rgb(var(--gray));
+    }
+
+    @media (max-width: 720px) {
+        .articles {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<script>
+    function setupArticleGrid(root: HTMLElement): void {
+        const buttons = root.querySelectorAll<HTMLButtonElement>("[data-tag-filter]");
+        const cards = root.querySelectorAll<HTMLElement>("[data-tags]");
+        const knownTags = new Set(
+            Array.from(buttons, (button) => button.dataset.tagFilter ?? ""),
+        );
+
+        function applyFilter(tag: string): void {
+            buttons.forEach((button) => {
+                button.setAttribute("aria-pressed", String(button.dataset.tagFilter === tag));
+            });
+            cards.forEach((card) => {
+                const cardTags = (card.dataset.tags ?? "").split(" ");
+                card.hidden = tag !== "" && !cardTags.includes(tag);
+            });
+
+            // Mirrors the filter in the URL so filtered views can be shared.
+            const url = new URL(window.location.href);
+            if (tag === "") {
+                url.searchParams.delete("tag");
+            } else {
+                url.searchParams.set("tag", tag);
+            }
+            history.replaceState(null, "", url);
+        }
+
+        buttons.forEach((button) => {
+            button.addEventListener("click", () => applyFilter(button.dataset.tagFilter ?? ""));
+        });
+
+        const initialTag = new URLSearchParams(window.location.search).get("tag");
+        if (initialTag && knownTags.has(initialTag)) {
+            applyFilter(initialTag);
+        }
+    }
+
+    document.querySelectorAll<HTMLElement>("[data-article-grid]").forEach(setupArticleGrid);
+</script>

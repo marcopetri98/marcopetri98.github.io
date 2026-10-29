@@ -1,0 +1,161 @@
+---
+interface ProjectLink {
+    label: string;
+    href: string;
+}
+
+interface Project {
+    title: string;
+    period?: string;
+    description?: string;
+    topics?: string[];
+    links?: ProjectLink[];
+}
+
+interface Props {
+    projects: Project[];
+}
+
+const { projects } = Astro.props;
+---
+
+<ul class="projects">
+    {
+        projects.map((project) => (
+            <li class="project">
+                <article>
+                    <div class="project-head">
+                        <h3>{project.title}</h3>
+                        {project.period && (
+                            <span class="project-period">{project.period}</span>
+                        )}
+                    </div>
+
+                    {project.description && (
+                        <p class="project-description">{project.description}</p>
+                    )}
+
+                    {project.topics && project.topics.length > 0 && (
+                        <ul class="project-topics">
+                            {project.topics.map((topic) => (
+                                <li>{topic}</li>
+                            ))}
+                        </ul>
+                    )}
+                </article>
+
+                {project.links && project.links.length > 0 && (
+                    <div class="project-links">
+                        {project.links.map((link) => (
+                            <a href={link.href} target="_blank">
+                                {link.label} ↗
+                            </a>
+                        ))}
+                    </div>
+                )}
+            </li>
+        ))
+    }
+</ul>
+
+<style>
+    .projects {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 1rem;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+
+    .project {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        gap: 0.8rem;
+        padding: 1rem 1.1rem;
+        border: 1px solid rgba(var(--section-dark), 0.6);
+        border-radius: 12px;
+        transition: border-color 0.2s ease;
+    }
+
+    .project:hover {
+        border-color: rgba(var(--section-dark), 1);
+    }
+
+    .project-head {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 0.15rem 1rem;
+    }
+
+    .project-head h3 {
+        margin: 0;
+        font-size: 1.02rem;
+        line-height: 1.4;
+        color: rgb(var(--gray-dark));
+    }
+
+    .project-period {
+        color: rgb(var(--gray));
+        font-size: 0.82rem;
+        font-weight: 700;
+        letter-spacing: 0.03em;
+        white-space: nowrap;
+    }
+
+    .project-description {
+        margin: 0.4rem 0 0;
+        color: rgb(var(--gray-dark));
+        font-size: 0.9rem;
+        line-height: 1.6;
+    }
+
+    .project-topics {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.3rem;
+        margin: 0.6rem 0 0;
+        padding: 0;
+        list-style: none;
+    }
+
+    .project-topics li {
+        padding: 0.05rem 0.5rem;
+        border-radius: 999px;
+        background: rgba(var(--section-light), 0.65);
+        color: var(--accent-dark);
+        font-size: 0.75rem;
+    }
+
+    .project-links {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.4rem;
+    }
+
+    .project-links a {
+        padding: 0.12rem 0.6rem;
+        border: 1px solid rgba(var(--section-dark), 0.8);
+        border-radius: 999px;
+        color: var(--accent);
+        font-size: 0.78rem;
+        font-weight: 600;
+        text-decoration: none;
+        transition: background-color 0.2s ease;
+    }
+
+    .project-links a:hover,
+    .project-links a:focus-visible {
+        background: rgba(var(--section-light), 0.65);
+        color: var(--accent-dark);
+    }
+
+    @media (max-width: 720px) {
+        .projects {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>

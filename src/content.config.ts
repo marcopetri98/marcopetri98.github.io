@@ -1,6 +1,7 @@
 import { defineCollection } from 'astro:content';
 import { glob } from 'astro/loaders';
 import { z } from 'astro/zod';
+import { ARTICLE_TAG_SLUGS } from './consts';
 
 // 1. Create a "parametric" generator function
 function createStandardCollection(folderName: string) {
@@ -14,12 +15,12 @@ function createStandardCollection(folderName: string) {
                 updatedDate: z.coerce.date().optional(),
                 featured: z.boolean().optional(),
                 heroImage: z.optional(image()),
+                tags: z.array(z.enum(ARTICLE_TAG_SLUGS)).default([]),
             }),
     });
 }
 
 // 2. Explicitly bind them to names (Astro requires this)
 export const collections = { 
-    blog: createStandardCollection('blog'),
-    opinions: createStandardCollection('opinions'),
+    articles: createStandardCollection('articles'),
 };

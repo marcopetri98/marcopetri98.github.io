@@ -1,13 +1,25 @@
 ---
 import { getCollection } from "astro:content";
-import BaseHead from "../components/BaseHead.astro";
-import Footer from "../components/Footer.astro";
-import Header from "../components/Header.astro";
+import cvUrl from "../assets/petri_marco_cv.pdf?url";
+import ExperienceTimeline from "../components/ExperienceTimeline.astro";
 import LatestArticlesSection from "../components/LatestArticlesSection.astro";
-import { SITE_DESCRIPTION, SITE_TITLE } from "../consts";
+import ProjectGrid from "../components/ProjectGrid.astro";
+import PublicationList from "../components/PublicationList.astro";
+import ResearchInterests from "../components/ResearchInterests.astro";
+import SocialLinks from "../components/SocialLinks.astro";
+import { ARTICLES_PATH, SITE_DESCRIPTION, SITE_TITLE } from "../consts";
+import SiteLayout from "../layouts/SiteLayout.astro";
 import { getArticleLandingData } from "../utils/articleLanding";
 
+// Number of entries shown in each list before the "Show more" button appears.
+const SHOW_MORE_THRESHOLD = 5;
+
+const affiliation = "AIRLab · Politecnico di Milano";
 const title = "PhD Student in Information Technology and Software Engineer";
+const owner = "Marco Petri"
+const academicTitle = "MSc";
+const contactEmail = "marco.petri@polimi.it";
+const cvFileName = `${owner.replaceAll(" ", "_")}_CV.pdf`;
 const introduction = [
 	`I am a PhD student and deep learning researcher at Politecnico di Milano, and a professional software engineer. Currently, I am pursuing a Doctor of Philosophy, a research experience lasting three to four years. My interests span both basic and applied research, specifically targeting <a href="https://euraxess.ec.europa.eu/career-development/researchers/manual-scientific-entrepreneurship/major-steps/trl" target="_blank">Technology Readiness Levels</a> 2 to 4.`,
 	"Regarding research, I am currently interested in representation learning and the use of embeddings for prediction. Specifically, I am exploring Joint Embedding Predictive Architectures and their applications to various domains, including robotics and computer vision.",
@@ -34,251 +46,528 @@ const researchInterests = [
 const portraitImage = "/potrait.png";
 const portraitAlt = "Portrait of Marco Petri";
 
-var featuredPostCount = 4;
-var numberOfLastPosts = 10;
+const publications = [
+	{
+		title: "Anomalearn: a modular and extensible library for the development of time series anomaly detection models",
+		type: "thesis" as const,
+		authors: "Marco Petri",
+		venue: "Master Thesis",
+		year: 2023,
+		abstract:
+			"Anomaly detection is the problem of identifying abnormally and potentially dangerous or faulty behaviour. It is applied in various domains and on several data types: tabular, images, or temporal. Many current state-of-the-art anomaly detection algorithms for time series share preprocessing or postprocessing operations. Furthermore, several datasets are employed for evaluating and comparing the performance of models. Such benchmark datasets exhibit a variable degree of complexity, which may affect the evaluation of the power of the methods compared in distinct experiments. Some publicly available datasets are overly simple and their use may overestimate the power of the models tested on them. However, there is no automatic and unambiguous definition of simplicity for these datasets. The first contribution of this thesis assesses the problem of simplicity in datasets of time series anomaly detection through a formal approach. It reports a definition of simplicity for anomaly detection datasets and the definition of scores representing three different types of simplicity. It also proposes algorithms to compute these scores on datasets and the analysis of their time complexity. Secondly, although libraries have been presented for many tasks, there is still a lack of an extensible and modular library specifically developed for creating new techniques related to anomaly detection. This thesis proposes anomalearn, a library for developing new models and approaches for time series anomaly detection. It consists of a rigorous object-oriented design using UML as the first tool to describe its functioning. Furthermore, anomalearn uses an approach based on interfaces to share API design employing the Python programming language, the current standard for machine and deep learning solutions. The thesis source code can be downloaded and explored at: https://github.com/marcopetri98/2021-2022-thesis.",
+		tags: ["Anomaly Detection", "Time series", "Datasets", "Library"],
+		links: [
+			{ label: "Thesis", href: "https://www.politesi.polimi.it/handle/10589/204117" },
+			{ label: "Code", href: "https://github.com/marcopetri98/2021-2022-thesis" },
+		],
+		bibtex: `@mastersthesis{petri2023anomalearn,
+  title = {Anomalearn: a modular and extensible library for the development of time series anomaly detection models},
+  author = {Petri, Marco},
+  school = {Politecnico di Milano},
+  year = {2023},
+  url = {https://www.politesi.polimi.it/handle/10589/204117}
+}`,
+	},
+	{
+		title: "ODIN AD: A Framework Supporting the Life-Cycle of Time Series Anomaly Detection Applications",
+		type: "conference" as const,
+		authors:
+			"Niccoló Zangrando, Piero Fraternali, Rocio Nahime Torres, Marco Petri, Nicoló Oreste Pinciroli Vago & Sergio Herrera",
+		venue: "Advanced Analytics and Learning on Temporal Data",
+		year: 2023,
+		abstract:
+			"Anomaly detection (AD) in numerical temporal data series is a prominent task in many domains, including the analysis of industrial equipment operation, the processing of IoT data streams, and the monitoring of appliance energy consumption. The life-cycle of an AD application with a Machine Learning (ML) approach requires data collection and preparation, algorithm design and selection, training, and evaluation. All these activities contain repetitive tasks which could be supported by tools. This paper describes ODIN AD, a framework assisting the life-cycle of AD applications in the phases of data preparation, prediction performance evaluation, and error diagnosis.",
+		tags: ["Anomaly Detection", "Time series", "Data annotation", "Model evaluation", "Evaluation metrics"],
+		links: [
+			{ label: "Paper", href: "https://link.springer.com/chapter/10.1007/978-3-031-24378-3_12" },
+			{ label: "Code", href: "https://github.com/nahitorres/odin" },
+		],
+		bibtex: `@inbook{zangrando2023odin,
+  title = {ODIN AD: A Framework Supporting the Life-Cycle of Time Series Anomaly Detection Applications},
+  author = {Zangrando, Niccoló and Fraternali, Piero and Torres, Rocio Nahime and Petri, Marco and Pinciroli Vago, Nicoló Oreste and Herrera, Sergio},
+  booktitle = {Advanced Analytics and Learning on Temporal Data},
+  publisher = {Springer International Publishing},
+  year = {2023},
+  pages = {181--196},
+  isbn = {9783031243783},
+  doi = {10.1007/978-3-031-24378-3_12}
+}`,
+	},
+	{
+		title: "Anomaly detection in quasi-periodic energy consumption data series: a comparison of algorithms",
+		type: "journal" as const,
+		authors:
+			"Niccolò Zangrando, Piero Fraternali, Marco Petri, Nicolò Oreste Pinciroli Vago & Sergio Luis Herrera González",
+		venue: "Energy Informatics",
+		year: 2022,
+		abstract:
+			"The diffusion of domotics solutions and of smart appliances and meters enables the monitoring of energy consumption at a very fine level and the development of forecasting and diagnostic applications. Anomaly detection (AD) in energy consumption data streams helps identify data points or intervals in which the behavior of an appliance deviates from normality and may prevent energy losses and break downs. Many statistical and learning approaches have been applied to the task, but the need remains of comparing their performances with data sets of different characteristics. This paper focuses on anomaly detection on quasi-periodic energy consumption data series and contrasts 12 statistical and machine learning algorithms tested in 144 different configurations on 3 data sets containing the power consumption signals of fridges. The assessment also evaluates the impact of the length of the series used for training and of the size of the sliding window employed to detect the anomalies. The generalization ability of the top five methods is also evaluated by applying them to an appliance different from that used for training. The results show that classical machine learning methods (Isolation Forest, One-Class SVM and Local Outlier Factor) outperform the best neural methods (GRU/LSTM autoencoder and multistep methods) and generalize better when applied to detect the anomalies of an appliance different from the one used for training.",
+		tags: ["Anomaly Detection", "Time series", "Machine Learning"],
+		links: [
+			{ label: "Paper", href: "https://link.springer.com/article/10.1186/s42162-022-00230-7" },
+			{ label: "Code", href: "https://github.com/herrera-sergio/AD-periodic-TS" },
+		],
+		bibtex: `@article{zangrando2022anomaly,
+  title = {Anomaly detection in quasi-periodic energy consumption data series: a comparison of algorithms},
+  author = {Zangrando, Niccolò and Fraternali, Piero and Petri, Marco and Pinciroli Vago, Nicolò Oreste and Herrera González, Sergio Luis},
+  journal = {Energy Informatics},
+  publisher = {Springer Science and Business Media LLC},
+  volume = {5},
+  number = {S4},
+  year = {2022},
+  month = dec,
+  issn = {2520-8942},
+  doi = {10.1186/s42162-022-00230-7}
+}`,
+	},
+];
 
-const blogPosts = await getCollection("blog");
-const opinionPosts = await getCollection("opinions");
-const posts = [...blogPosts, ...opinionPosts];
+const work = [
+	{
+		title: "Teaching Assistant",
+		institution: "Vita-Salute San Raffaele University",
+		period: "Sept 2026 - Present",
+		location: "Milano",
+		description:
+		"Help students understand and apply the concepts of the Principles of Software Engineering and Data Bases course, and learn how to approach its problems.",
+		topics: ["Teaching", "Software Engineering", "Databases"],
+	},
+	{
+		title: "Data Scientist",
+		institution: "Intesa Sanpaolo",
+		period: "Nov 2025 - Feb 2026",
+		location: "Milano",
+		description:
+			"Designed and maintained machine learning models for anti-fraud risk classification, together with the monitoring of their performance.",
+		topics: ["Machine Learning", "Python", "Scikit-Learn", "Polars"],
+	},
+	{
+		title: "Software Engineer",
+		institution: "Reply",
+		period: "Oct 2023 - Nov 2025",
+		location: "Milano",
+		description:
+			"Led a 3-person team migrating an on-premises application to Azure, and built data pipelines, Python microservices, an LLM-based document chatbot for 10K+ users and a Java e-commerce platform for biotech institutions.",
+		topics: ["Software Engineering", "Python", "Java", "LLMs", "Azure", "Databricks"],
+	},
+];
 
-const { featuredPosts, latestPosts } = getArticleLandingData(
-	posts,
-	featuredPostCount,
-	numberOfLastPosts,
-);
+const education = [
+	{
+		title: "PhD in Information Technology",
+		institution: "Politecnico di Milano",
+		period: "2026 - Present",
+	},
+	{
+		title: "MSc in Computer Science and Engineering",
+		institution: "Politecnico di Milano",
+		period: "2020 - 2023",
+	},
+	{
+		title: "BSc in Computer Science and Engineering",
+		institution: "Politecnico di Milano",
+		period: "2017 - 2020",
+	},
+];
+
+const projects = [
+	{
+		title: "Portfolio analysis web app",
+		period: "2025 - Present",
+		description:
+			"A personal Streamlit application computing risk metrics such as Sharpe ratio, maximum drawdown and volatility for securities and portfolios, with interactive charts and basic backtesting.",
+		topics: ["Python", "Streamlit", "Pandas"],
+	},
+	{
+		title: "Anomalearn",
+		period: "2022 - 2023",
+		description:
+			"A modular and extensible Python library for developing and evaluating time series anomaly detection methods, with loaders for public benchmark datasets.",
+		topics: ["Python", "Scikit-Learn", "NumPy", "Numba"],
+		links: [
+			{ label: "Repository", href: "https://github.com/marcopetri98/anomalearn" },
+			{ label: "PyPI", href: "https://pypi.org/project/anomalearn/" },
+		],
+	},
+	{
+		title: "Triplet RANSAC",
+		period: "2022",
+		description:
+			"A deep neural network that learns a semantic sampling distribution from paired keypoints to improve RANSAC-based localization of RGB-D images.",
+		topics: ["Python", "PyTorch", "OpenCV", "Open3D"],
+		links: [{ label: "Repository", href: "https://github.com/marcopetri98/TripletRansac_Python_IACV" }],
+	},
+	{
+		title: "The Abyss",
+		period: "2021",
+		description:
+			"An adventure game in which the player builds a team of three characters to explore a huge dungeon descending towards the centre of the earth.",
+		topics: ["C#", "Unity", "Gameplay development"],
+		links: [{ label: "Play it", href: "https://polimi-game-collective.itch.io/the-abyss" }],
+	},
+];
+
+// Skill groups are rendered as cards, so they use the same shape as projects.
+const skillGroups = [
+	{
+		title: "Languages",
+		topics: ["Python", "Java", "SQL", "C", "C#"],
+	},
+	{
+		title: "Machine & Deep Learning",
+		topics: ["PyTorch", "Lightning", "TensorFlow", "Keras", "Hugging Face", "Scikit-Learn", "SciPy", "NumPy"],
+	},
+	{
+		title: "Data",
+		topics: ["Pandas", "Polars", "PySpark", "Databricks", "MySQL", "PostgreSQL", "MongoDB"],
+	},
+	{
+		title: "Engineering & DevOps",
+		topics: ["Git", "CI/CD", "Azure", "FastAPI", "Slurm", "Singularity", "Terraform", "Docker"],
+	},
+];
+
+const numberOfLastPosts = 5;
+
+const articlePosts = await getCollection("articles");
+const posts = [...articlePosts];
+
+const { latestPosts } = getArticleLandingData(posts, 0, numberOfLastPosts);
 ---
 
-<!doctype html>
-<html lang="en">
-	<head>
-		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
-		<style>
-			:root {
-				--home-bg: #f6f3ec;
-				--home-surface: #fffdf9;
-				--home-ink: #14213d;
-				--home-muted: #5f6b7a;
-				--home-border: rgba(20, 33, 61, 0.12);
-				--home-accent: #8f3b2e;
-				--home-accent-soft: rgba(143, 59, 46, 0.08);
-			}
-
-			body {
-				background:
-					radial-gradient(circle at top left, rgba(143, 59, 46, 0.08), transparent 28%),
-					linear-gradient(180deg, #fbfaf7 0%, var(--home-bg) 100%);
-			}
-
-			main.homepage {
-				width: min(1120px, calc(100% - 2rem));
-				margin: 0 auto;
-				padding: 2rem 0 4rem;
-			}
-
-			section {
-				margin-bottom: 2rem;
-			}
-
-			.hero {
-				display: grid;
-				grid-template-columns: minmax(220px, 320px) minmax(0, 1fr);
-				gap: 2rem;
-				align-items: center;
-				padding: 2rem;
-				border: 1px solid var(--home-border);
-				border-radius: 28px;
-				background: rgba(255, 253, 249, 0.92);
-				box-shadow: 0 28px 70px rgba(20, 33, 61, 0.08);
-			}
-
-			.hero-portrait,
-			.hero-portrait-placeholder {
-				aspect-ratio: 4 / 5;
-				width: 100%;
-				border-radius: 24px;
-				border: 1px solid var(--home-border);
-				background:
-					linear-gradient(145deg, rgba(143, 59, 46, 0.14), rgba(20, 33, 61, 0.06)),
-					var(--home-surface);
-				box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.65);
-			}
-
-			.hero-portrait {
-				display: block;
-				object-fit: cover;
-			}
-
-			.hero-portrait-placeholder {
-				display: grid;
-				place-items: center;
-				color: var(--home-accent);
-				font-size: clamp(2.5rem, 6vw, 4.5rem);
-				font-weight: 700;
-				letter-spacing: 0.08em;
-			}
-
-			.hero-copy {
-				display: grid;
-				gap: 1rem;
-			}
-
-			.hero-kicker {
-				margin: 0;
-				color: var(--home-accent);
-				font-size: 0.8rem;
-				font-weight: 700;
-				letter-spacing: 0.18em;
-				text-transform: uppercase;
-			}
-
-			.hero h1 {
-				margin: 0;
-				font-size: clamp(2.8rem, 5vw, 4.8rem);
-				line-height: 0.95;
-				letter-spacing: -0.04em;
-				color: var(--home-ink);
-			}
-
-			.hero-subtitle {
-				margin: 0;
-				color: var(--home-muted);
-				font-size: 1.15rem;
-				line-height: 1.7;
-			}
-
-			.hero-intro {
-				display: grid;
-				gap: 0.9rem;
-				max-width: 60ch;
-			}
-
-			.hero-intro p {
-				margin: 0;
-				color: var(--home-muted);
-				font-size: 1rem;
-				line-height: 1.8;
-			}
-
-			.section-panel {
-				padding: 1.75rem;
-				border: 1px solid var(--home-border);
-				border-radius: 28px;
-				background: rgba(255, 253, 249, 0.88);
-				box-shadow: 0 22px 52px rgba(20, 33, 61, 0.06);
-			}
-
-			.section-heading {
-				margin-bottom: 1.4rem;
-			}
-
-			.section-heading h2 {
-				margin: 0 0 0.35rem;
-				font-size: clamp(1.8rem, 3vw, 2.5rem);
-				color: var(--home-ink);
-			}
-
-			.section-heading p {
-				margin: 0;
-				color: var(--home-muted);
-				line-height: 1.7;
-			}
-
-			.interests-grid {
-				display: grid;
-				grid-template-columns: repeat(3, minmax(0, 1fr));
-				gap: 1rem;
-			}
-
-			.interest-card {
-				padding: 1.25rem;
-				border: 1px solid var(--home-border);
-				border-radius: 20px;
-				background: var(--home-surface);
-			}
-
-			.interest-card h3 {
-				margin: 0 0 0.65rem;
-				font-size: 1.15rem;
-				color: var(--home-ink);
-			}
-
-			.interest-card p {
-				margin: 0;
-				color: var(--home-muted);
-				line-height: 1.75;
-			}
-
-			@media (max-width: 900px) {
-				.hero {
-					grid-template-columns: 1fr;
-				}
-
-				.interests-grid {
-					grid-template-columns: 1fr;
-				}
-			}
-
-			@media (max-width: 720px) {
-				main.homepage {
-					width: calc(100% - 1rem);
-					padding-top: 1rem;
-				}
-
-				.hero,
-				.section-panel {
-					padding: 1.25rem;
-					border-radius: 22px;
-				}
-			}
-		</style>
-	</head>
-	<body>
-		<Header />
-		<main class="homepage">
-			<section class="hero" aria-labelledby="home-title">
-				{
-					portraitImage ? (
-						<img class="hero-portrait" src={portraitImage} alt={portraitAlt} />
-					) : (
-						<div class="hero-portrait-placeholder" aria-label="Portrait placeholder">MP</div>
-					)
-				}
-
+<SiteLayout title={SITE_TITLE} description={SITE_DESCRIPTION}>
+	<main class="sp-main">
+		<section id="about" class="sp-section" aria-labelledby="home-title">
+			<div class="hero">
+				<img class="hero-portrait" src={portraitImage} alt={portraitAlt} />
 				<div class="hero-copy">
-					<p class="hero-kicker">Homepage</p>
-					<h1 id="home-title">{SITE_TITLE}</h1>
+					<p class="hero-kicker">{affiliation}</p>
+					<h1 id="home-title">
+						{owner}
+						<span class="hero-academic-title">{academicTitle}</span>
+					</h1>
 					<p class="hero-subtitle">{title}</p>
-					<div class="hero-intro">
-						{introduction.map((html) => <p set:html={html} />)}
+					<div class="hero-links">
+						<div class="hero-actions">
+							<a class="hero-button" href={`mailto:${contactEmail}`}>
+								<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+									<path d="M4 6h16v12H4zM4 7l8 6 8-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+								</svg>
+								Get In Touch
+							</a>
+						</div>
+						<SocialLinks size={22} align="center" />
 					</div>
 				</div>
-			</section>
+			</div>
 
-			<section class="section-panel" aria-labelledby="research-interests">
-				<div class="section-heading">
-					<h2 id="research-interests">Research Interests</h2>
-				</div>
+			<div class="hero-intro">
+				{introduction.map((html) => <p set:html={html} />)}
+			</div>
 
-				<div class="interests-grid">
-					{researchInterests.map((interest) => (
-						<article class="interest-card">
-							<h3>{interest.title}</h3>
-							<p>{interest.description}</p>
-						</article>
-					))}
-				</div>
-			</section>
+			<div>
+				<h2 class="sp-heading">Research Interests</h2>
+				<ResearchInterests interests={researchInterests} />
+			</div>
+		</section>
 
-			<div class="section-panel">
-				<LatestArticlesSection
-					latestPosts={latestPosts}
-					title="Latest Posts"
-					description={`The ${numberOfLastPosts} most recent posts, including both tech and opinions.`}
-					emptyMessage="There are no recent posts to show yet."
-					variant="home"
+		<section id="publications" class="sp-section">
+			<div>
+				<h2 class="sp-heading">Publications</h2>
+				<PublicationList
+					publications={publications}
+					limit={SHOW_MORE_THRESHOLD}
+					highlightAuthor={owner}
 				/>
 			</div>
-		</main>
-		<Footer />
-	</body>
-</html>
+		</section>
+
+		<section id="experience" class="sp-section">
+			<div>
+				<h2 class="sp-heading">Work Experiences</h2>
+				<ExperienceTimeline experiences={work} limit={SHOW_MORE_THRESHOLD} />
+			</div>
+			<div>
+				<h2 class="sp-heading">Education</h2>
+				<ExperienceTimeline experiences={education} limit={SHOW_MORE_THRESHOLD} />
+			</div>
+		</section>
+
+		<section id="projects" class="sp-section">
+			<div>
+				<h2 class="sp-heading">Selected Projects</h2>
+				<ProjectGrid projects={projects} />
+			</div>
+		</section>
+
+		<section id="skills" class="sp-section">
+			<div>
+				<h2 class="sp-heading">Core Skills</h2>
+				<ProjectGrid projects={skillGroups} />
+			</div>
+		</section>
+
+		<section id="writings" class="sp-section">
+			<LatestArticlesSection
+				latestPosts={latestPosts}
+				title="Latest Writings"
+				description={`The ${numberOfLastPosts} most recent posts, including both tech and opinions.`}
+				emptyMessage="There are no recent posts to show yet."
+				variant="home"
+			/>
+			<div class="writings-links">
+				<a href={ARTICLES_PATH}>All articles →</a>
+			</div>
+		</section>
+	</main>
+</SiteLayout>
+
+<style>
+	/* The post cards of LatestArticlesSection are white by default. */
+	:global([data-theme="dark"]) .sp-main {
+		--latest-item-bg: rgba(var(--section-light), 0.35);
+		--latest-item-border: rgba(var(--section-dark), 0.4);
+	}
+
+	.sp-main {
+		/* Maps the colours of LatestArticlesSection to the global palette. */
+		--home-ink: rgb(var(--gray-dark));
+		--home-muted: rgb(var(--gray));
+		--home-accent: var(--accent);
+		--home-accent-soft: rgba(var(--section-dark), 0.35);
+		--home-border: rgba(var(--section-dark), 0.24);
+
+		width: min(920px, calc(100% - 2rem));
+		max-width: none;
+		margin: 0 auto;
+		padding: 2.5rem 0 3rem;
+	}
+
+	/* The portfolio components cap themselves at 720px: let them fill the
+	   wider page, while running text stays at a comfortable reading width. */
+	.sp-section > :global(section) {
+		max-width: none;
+	}
+
+	.sp-main :global(p),
+	.sp-main :global(.experience-description-list),
+	.sp-main :global(.timeline-description-list) {
+		max-width: 720px;
+	}
+
+	.sp-section {
+		display: grid;
+		gap: 2.5rem;
+		margin-bottom: 5.5rem;
+		scroll-margin-top: 5rem;
+	}
+
+	.sp-section:last-child {
+		margin-bottom: 0;
+	}
+
+	/* The older portfolio components render their own heading block:
+	   strip its underline so it matches the light page headings. */
+	.sp-main .sp-section > :global(section > .section-heading) {
+		margin: 0 0 1.1rem;
+		padding: 0;
+		border: none;
+	}
+
+	.sp-heading,
+	.sp-main .sp-section > :global(section > .section-heading h2) {
+		margin: 0 0 1.1rem;
+		font-size: clamp(1.2rem, 1.05rem + 0.6vw, 1.35rem);
+		line-height: 1.3;
+		letter-spacing: -0.01em;
+		color: rgb(var(--gray-dark));
+	}
+
+	.sp-main .sp-section > :global(section > .section-heading h2) {
+		margin-bottom: 0;
+	}
+
+	.sp-main .sp-section > :global(section > .section-heading p) {
+		margin-top: 0.6rem;
+	}
+
+	.sp-heading::after,
+	.sp-main .sp-section > :global(section > .section-heading h2::after) {
+		content: "";
+		display: block;
+		width: 1.75rem;
+		height: 2px;
+		margin-top: 0.4rem;
+		border-radius: 2px;
+		background: var(--accent);
+	}
+
+	/* The hero fills the first screen: viewport minus the floating
+	   header and the top padding of the main container. */
+	.hero {
+		display: grid;
+		grid-template-columns: clamp(11rem, 22vw, 15rem) minmax(0, 1fr);
+		gap: clamp(1.5rem, 4vw, 3rem);
+		align-items: center;
+		align-content: center;
+		min-height: calc(30vh - 6.5rem);
+		min-height: calc(30svh - 6.5rem);
+	}
+
+	.hero-portrait {
+		display: block;
+		width: 100%;
+		aspect-ratio: 1 / 1;
+		object-fit: cover;
+		object-position: top;
+		border-radius: 50%;
+		border: 1px solid rgba(var(--section-dark), 0.6);
+	}
+
+	.hero-copy {
+		display: grid;
+		gap: 0.75rem;
+		justify-self: start;
+	}
+
+	/* Buttons and social links are centered on the subtitle: the copy block
+	   shrinks to its widest line, so centering inside it centers on that. */
+	.hero-links {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 1rem;
+		margin-top: 0.4rem;
+	}
+
+	.hero-actions {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: center;
+		gap: 0.6rem;
+	}
+
+	.hero-button {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.45rem;
+		padding: 0.5rem 1.1rem;
+		border: 1px solid var(--accent);
+		border-radius: 999px;
+		color: var(--accent);
+		font-size: 0.9rem;
+		font-weight: 600;
+		text-decoration: none;
+		transition:
+			background-color 0.2s ease,
+			border-color 0.2s ease,
+			color 0.2s ease;
+	}
+
+	.hero-button:hover,
+	.hero-button:focus-visible {
+		background: rgba(var(--section-light), 0.65);
+		color: var(--accent-dark);
+	}
+
+	.hero-button--primary {
+		background: var(--accent);
+		color: rgb(var(--on-accent));
+	}
+
+	.hero-button--primary:hover,
+	.hero-button--primary:focus-visible {
+		border-color: var(--accent-dark);
+		background: var(--accent-dark);
+		color: rgb(var(--on-accent));
+	}
+
+	.hero-kicker {
+		margin: 0;
+		color: var(--accent);
+		font-size: 0.8rem;
+		font-weight: 700;
+		letter-spacing: 0.16em;
+		text-transform: uppercase;
+	}
+
+	.hero h1 {
+		margin: 0;
+		font-size: clamp(2.4rem, 1.6rem + 4vw, 4rem);
+		line-height: 1.05;
+		letter-spacing: -0.02em;
+		color: rgb(var(--gray-dark));
+	}
+
+	.hero-academic-title {
+		margin-left: 0.35em;
+		color: rgb(var(--gray));
+		font-size: 0.4em;
+		font-weight: 400;
+		letter-spacing: 0.02em;
+		white-space: nowrap;
+	}
+
+	.hero-subtitle {
+		margin: 0 0 0.5rem;
+		color: rgb(var(--gray));
+		font-size: clamp(1rem, 0.9rem + 0.4vw, 1.15rem);
+	}
+
+	.hero-intro p {
+		font-size: clamp(1rem, 0.92rem + 0.3vw, 1.1rem);
+		margin: 0 0 0.9rem;
+		line-height: 1.7;
+		text-align: justify;
+	}
+
+	.hero-intro p:last-child {
+		margin-bottom: 0;
+	}
+
+	.writings-links {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 1.25rem;
+		margin-top: -1rem;
+	}
+
+	.writings-links a {
+		font-weight: 600;
+		text-decoration: none;
+	}
+
+	.writings-links a:hover {
+		color: var(--accent-dark);
+		text-decoration: underline;
+	}
+
+	@media (max-width: 720px) {
+		.sp-main {
+			padding-top: 1.75rem;
+		}
+
+		/* On phones the hero stacks, is centered and fills the first
+		   screen below the floating header. */
+		.hero {
+			grid-template-columns: 1fr;
+			justify-items: center;
+			align-content: center;
+			text-align: center;
+			min-height: calc(30vh - 5.75rem);
+			min-height: calc(30svh - 5.75rem);
+		}
+
+		.hero-portrait {
+			width: clamp(8rem, 42vw, 12rem);
+		}
+
+		.hero-copy {
+			justify-self: stretch;
+		}
+
+		.sp-section {
+			margin-bottom: 4rem;
+		}
+	}
+</style>

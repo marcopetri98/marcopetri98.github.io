@@ -1,117 +1,291 @@
 ---
 import { Image } from "astro:assets";
-import BaseHead from "../components/BaseHead.astro";
-import Footer from "../components/Footer.astro";
 import FormattedDate from "../components/FormattedDate.astro";
-import Header from "../components/Header.astro";
+import { ARTICLES_PATH, ARTICLE_TAGS, SITE_OWNER, type ArticleTag } from "../consts";
+import SiteLayout from "./SiteLayout.astro";
 
 interface Props {
 	title: string;
 	description: string;
 	pubDate?: Date;
 	updatedDate?: Date;
-	heroImage?: ImageMetadata | string;
+	heroImage?: ImageMetadata;
+	tags?: ArticleTag[];
 }
 
-const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
+const { title, description, pubDate, updatedDate, heroImage, tags = [] } = Astro.props;
 ---
 
-<html lang="en">
-	<head>
-		<BaseHead title={title} description={description} />
-		<style>
-			main {
-				width: calc(100% - 2em);
-				max-width: 100%;
-				margin: 0;
-			}
-			.hero-image {
-				width: 100%;
-			}
-			.hero-image img {
-				display: block;
-				margin: 0 auto;
-				border-radius: 12px;
-				box-shadow: var(--box-shadow);
-			}
-			.prose {
-				width: 720px;
-				max-width: calc(100% - 2em);
-				margin: auto;
-				padding: 1em;
-				color: rgb(var(--gray-dark));
-				font-size: clamp(
-					0.95rem,
-					2vw + 0.5rem,
-					1rem
-				);
-			}
-			.prose :global(pre) {
-				max-width: 100%;
-				overflow-x: auto;
-			}
-			.prose :global(pre),
-			.prose :global(code) {
-				font-size: clamp(0.75rem, 2.5vw, 0.95em);
-				word-break: break-word;
-			}
-			.title {
-				margin-bottom: 1em;
-				padding: 1em 0;
-				text-align: center;
-				line-height: 1;
-			}
-			.title h1 {
-				margin: 0 0 0.5em 0;
-				font-size: clamp(1.5rem, 5vw, 3rem);
-				line-height: 1.2;
-			}
-			.date {
-				margin-bottom: 0.5em;
-				color: rgb(var(--gray));
-			}
-			.last-updated-on {
-				font-style: italic;
-			}
-		</style>
-	</head>
+<SiteLayout title={`${title} | ${SITE_OWNER}`} description={description}>
+	<main class="post-main">
+		<article>
+			<header class="post-header">
+				<a class="post-back" href={ARTICLES_PATH}>← All articles</a>
 
-	<body>
-		<Header />
-		<main>
-			<article>
-				<div class="hero-image">
-					{
-						heroImage && (
-							<Image
-								width={1020}
-								height={510}
-								src={heroImage as ImageMetadata}
-								alt=""
-							/>
-						)
-					}
-				</div>
-				<div class="prose">
-					<div class="title">
-						<div class="date">
+				{
+					(pubDate || updatedDate) && (
+						<p class="post-meta">
 							{pubDate && <FormattedDate date={pubDate} />}
-							{
-								updatedDate && (
-									<div class="last-updated-on">
-										Last updated on{" "}
-										<FormattedDate date={updatedDate} />
-									</div>
-								)
-							}
-						</div>
-						<h1>{title}</h1>
-						<hr />
-					</div>
-					<slot />
-				</div>
-			</article>
-		</main>
-		<Footer />
-	</body>
-</html>
+							{updatedDate && (
+								<span class="post-updated">
+									Updated <FormattedDate date={updatedDate} />
+								</span>
+							)}
+						</p>
+					)
+				}
+
+				<h1>{title}</h1>
+				<p class="post-lead">{description}</p>
+
+				{
+					tags.length > 0 && (
+						<ul class="post-tags" aria-label="Tags">
+							{tags.map((tag) => (
+								<li>
+									<a href={`${ARTICLES_PATH}?tag=${tag}`}>{ARTICLE_TAGS[tag]}</a>
+								</li>
+							))}
+						</ul>
+					)
+				}
+			</header>
+
+			{
+				heroImage && (
+					<figure class="post-hero">
+						<Image width={1020} height={510} src={heroImage} alt="" />
+					</figure>
+				)
+			}
+
+			<div class="post-body">
+				<slot />
+			</div>
+
+			<footer class="post-footer">
+				<a class="post-back" href={ARTICLES_PATH}>← All articles</a>
+			</footer>
+		</article>
+	</main>
+</SiteLayout>
+
+<style>
+	.post-main {
+		width: min(920px, calc(100% - 2rem));
+		max-width: none;
+		margin: 0 auto;
+		padding: 2.5rem 0 4rem;
+	}
+
+	/* The page uses the full 920px for the hero image, while the text keeps a
+	   centered 720px column for comfortable reading. */
+	.post-header,
+	.post-body,
+	.post-footer {
+		max-width: 720px;
+		margin-inline: auto;
+	}
+
+	.post-back {
+		display: inline-block;
+		color: var(--accent);
+		font-size: 0.88rem;
+		font-weight: 600;
+		text-decoration: none;
+	}
+
+	.post-back:hover {
+		color: var(--accent-dark);
+		text-decoration: underline;
+	}
+
+	.post-meta {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.2rem 0.6rem;
+		margin: 1.5rem 0 0.5rem;
+		color: rgb(var(--gray));
+		font-size: 0.85rem;
+		font-weight: 700;
+		letter-spacing: 0.03em;
+	}
+
+	.post-updated {
+		font-weight: 400;
+		font-style: italic;
+	}
+
+	.post-updated::before {
+		content: "·";
+		margin-right: 0.6rem;
+		font-style: normal;
+	}
+
+	.post-header h1 {
+		margin: 0;
+		font-size: clamp(2rem, 1.5rem + 2.2vw, 2.8rem);
+		line-height: 1.15;
+		letter-spacing: -0.02em;
+		color: rgb(var(--gray-dark));
+	}
+
+	.post-lead {
+		margin: 0.9rem 0 0;
+		color: rgb(var(--gray));
+		font-size: clamp(1.05rem, 0.98rem + 0.3vw, 1.15rem);
+		line-height: 1.6;
+	}
+
+	.post-tags {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.35rem;
+		margin: 1rem 0 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	.post-tags a {
+		display: block;
+		padding: 0.1rem 0.6rem;
+		border-radius: 999px;
+		background: rgba(var(--section-light), 0.65);
+		color: var(--accent-dark);
+		font-size: 0.78rem;
+		text-decoration: none;
+		transition: background-color 0.2s ease;
+	}
+
+	.post-tags a:hover,
+	.post-tags a:focus-visible {
+		background: rgba(var(--section-dark), 0.45);
+	}
+
+	.post-hero {
+		margin: 2rem 0 0;
+	}
+
+	.post-hero :global(img) {
+		display: block;
+		width: 100%;
+		height: auto;
+		aspect-ratio: 2 / 1;
+		object-fit: cover;
+		border-radius: 12px;
+		border: 1px solid rgba(var(--section-dark), 0.5);
+	}
+
+	.post-body {
+		margin-top: 2.25rem;
+		color: rgb(var(--gray-dark));
+		font-size: clamp(1rem, 0.95rem + 0.25vw, 1.08rem);
+		line-height: 1.75;
+	}
+
+	/* Typography for the rendered Markdown, which is not scoped to this layout. */
+	.post-body :global(p) {
+		margin: 0 0 1.25em;
+	}
+
+	.post-body :global(:is(h2, h3, h4, h5, h6)) {
+		margin: 2.2em 0 0.6em;
+		line-height: 1.3;
+		letter-spacing: -0.01em;
+		color: rgb(var(--gray-dark));
+	}
+
+	.post-body :global(h2) {
+		font-size: 1.5em;
+	}
+
+	.post-body :global(h3) {
+		font-size: 1.3em;
+	}
+
+	.post-body :global(:is(h4, h5, h6)) {
+		font-size: 1.15em;
+	}
+
+	.post-body :global(a) {
+		color: var(--accent);
+		text-decoration: underline;
+		text-underline-offset: 0.15em;
+	}
+
+	.post-body :global(a:hover) {
+		color: var(--accent-dark);
+	}
+
+	.post-body :global(:is(ul, ol)) {
+		margin: 0 0 1.25em;
+		padding-left: 1.4em;
+	}
+
+	.post-body :global(li + li) {
+		margin-top: 0.35em;
+	}
+
+	.post-body :global(blockquote) {
+		margin: 1.5em 0;
+		padding: 0.1em 0 0.1em 1.1em;
+		border-left: 3px solid var(--accent);
+		color: rgb(var(--gray));
+		font-size: 1em;
+	}
+
+	.post-body :global(code) {
+		font-size: 0.88em;
+		border-radius: 4px;
+	}
+
+	.post-body :global(pre) {
+		margin: 0 0 1.5em;
+		padding: 1rem 1.2rem;
+		overflow-x: auto;
+		border: 1px solid rgba(var(--section-dark), 0.4);
+		border-radius: 12px;
+		font-size: 0.85rem;
+		line-height: 1.6;
+	}
+
+	.post-body :global(pre code) {
+		font-size: inherit;
+	}
+
+	.post-body :global(img) {
+		display: block;
+		margin: 1.5em auto;
+		border-radius: 12px;
+	}
+
+	.post-body :global(table) {
+		display: block;
+		margin: 0 0 1.5em;
+		overflow-x: auto;
+		border-collapse: collapse;
+		font-size: 0.92em;
+	}
+
+	.post-body :global(:is(th, td)) {
+		padding: 0.5em 0.8em;
+		border-bottom: 1px solid rgba(var(--section-dark), 0.5);
+		text-align: left;
+	}
+
+	.post-body :global(hr) {
+		margin: 2.5em 0;
+	}
+
+	.post-footer {
+		margin-top: 3rem;
+		padding-top: 1.25rem;
+		border-top: 1px solid rgba(var(--section-dark), 0.5);
+	}
+
+	@media (max-width: 720px) {
+		.post-main {
+			padding-top: 1.75rem;
+		}
+	}
+</style>

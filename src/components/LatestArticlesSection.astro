@@ -1,5 +1,6 @@
 ---
 import type { CollectionEntry, CollectionKey } from "astro:content";
+import { articleUrl } from "../utils/articleLanding";
 import FormattedDate from "./FormattedDate.astro";
 
 interface Props {
@@ -33,7 +34,7 @@ const {
 				<ol class="latest-list">
 					{latestPosts.map((post, index) => (
 						<li class="latest-item">
-							<a href={`/${post.collection}/${post.id}/`}>
+							<a href={articleUrl(post)}>
 								<div class="latest-index">{String(index + 1).padStart(2, "0")}</div>
 								<div class="latest-copy">
 									<h3>{post.data.title}</h3>
@@ -144,8 +145,8 @@ const {
 	}
 
 	.latest-section--home .latest-item a {
-		background: #ffffff;
-		border: 1px solid rgba(20, 33, 61, 0.08);
+		background: var(--latest-item-bg, #ffffff);
+		border: 1px solid var(--latest-item-border, rgba(20, 33, 61, 0.08));
 	}
 
 	.latest-section--landing .latest-item a:hover,

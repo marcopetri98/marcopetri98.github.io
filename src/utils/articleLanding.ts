@@ -1,6 +1,15 @@
 import type { CollectionEntry, CollectionKey } from 'astro:content';
+import { ARTICLES_PATH } from '../consts';
 
 type BlogEntry = CollectionEntry<CollectionKey>;
+
+// Single source of truth for article URLs: /articles/<slug>/, where the slug
+// is the `slug` frontmatter field (or the file path when it is missing). It
+// must match the route in src/pages/articles/[...slug].astro. Published URLs
+// must never change, so keep this and each article's slug stable.
+export function articleUrl(post: BlogEntry): string {
+	return `${ARTICLES_PATH}${post.id}/`;
+}
 
 interface ArticleLandingData {
 	featuredPosts: BlogEntry[];

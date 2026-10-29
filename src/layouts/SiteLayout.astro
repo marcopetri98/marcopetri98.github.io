@@ -1,0 +1,419 @@
+---
+import BaseHead from "../components/BaseHead.astro";
+import Footer from "../components/Footer.astro";
+import { ARTICLES_PATH, PORTFOLIO_PATH, SITE_OWNER } from "../consts";
+
+interface Props {
+	title: string;
+	description: string;
+}
+
+const { title, description } = Astro.props;
+
+const portfolioSections = [
+	{ id: "about", label: "About" },
+	{ id: "publications", label: "Publications" },
+	{ id: "experience", label: "Experience" },
+	{ id: "projects", label: "Projects" },
+	{ id: "skills", label: "Skills" },
+];
+
+function withoutTrailingSlash(path: string): string {
+	return path.length > 1 ? path.replace(/\/$/, "") : path;
+}
+
+const currentPath = withoutTrailingSlash(Astro.url.pathname);
+const isPortfolio = currentPath === withoutTrailingSlash(PORTFOLIO_PATH);
+
+// On the portfolio itself the links only scroll; elsewhere they open it.
+const navLinks = [
+	...portfolioSections.map((section) => ({
+		label: section.label,
+		href: isPortfolio ? `#${section.id}` : `${PORTFOLIO_PATH}#${section.id}`,
+		current: false,
+	})),
+	{
+		label: "Articles",
+		href: ARTICLES_PATH,
+		current: currentPath === withoutTrailingSlash(ARTICLES_PATH),
+	},
+];
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead title={title} description={description} />
+		<script is:inline>
+			// Applies the saved theme, or the system one, before the first paint
+			// so the page never flashes in the wrong colours.
+			(function () {
+				var theme = null;
+				try {
+					theme = localStorage.getItem("theme");
+				} catch (error) {
+					// Storage can be blocked (e.g. private mode): fall back to the system theme.
+				}
+				if (theme !== "light" && theme !== "dark") {
+					theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+				}
+				document.documentElement.dataset.theme = theme;
+			})();
+		</script>
+		<style is:global>
+			/* Every component is sized in rem, so the root size scales the whole
+			   page: it grows with the viewport from 14px on small phones up to
+			   15px from ~750px wide. Percentages keep the user's browser font
+			   setting in charge. */
+			html {
+				font-size: clamp(87.5%, 82% + 0.25vw, 93.75%);
+				scroll-behavior: smooth;
+			}
+
+			html body {
+				font-size: 1rem;
+				line-height: 1.55;
+			}
+
+			@media (prefers-reduced-motion: reduce) {
+				html {
+					scroll-behavior: auto;
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<header class="site-header">
+			<nav class="site-navbar" aria-label="Site">
+				<a class="site-logo" href={PORTFOLIO_PATH}>{SITE_OWNER}</a>
+				<button type="button" class="site-theme-toggle" aria-label="Switch to dark mode">
+					<svg class="site-theme-icon site-theme-icon--moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+						<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+					</svg>
+					<svg class="site-theme-icon site-theme-icon--sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+						<circle cx="12" cy="12" r="4.5" fill="none" stroke="currentColor" stroke-width="2" />
+						<path d="M12 1.5v2.5M12 20v2.5M4.6 4.6l1.8 1.8M17.6 17.6l1.8 1.8M1.5 12H4M20 12h2.5M4.6 19.4l1.8-1.8M17.6 6.4l1.8-1.8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+					</svg>
+				</button>
+				<button
+					type="button"
+					class="site-menu-toggle"
+					aria-expanded="false"
+					aria-controls="site-nav"
+					aria-label="Open menu"
+				>
+					<span class="site-menu-icon" aria-hidden="true"></span>
+				</button>
+				<ul id="site-nav" class="site-nav">
+					{navLinks.map((link) => (
+						<li>
+							<a href={link.href} aria-current={link.current ? "page" : undefined}>
+								{link.label}
+							</a>
+						</li>
+					))}
+				</ul>
+			</nav>
+		</header>
+
+		<slot />
+
+		<Footer />
+	</body>
+</html>
+
+<style>
+	.site-header {
+		position: sticky;
+		top: 0.75rem;
+		z-index: 100;
+		width: min(920px, calc(100% - 2rem));
+		margin: 0.75rem auto 0;
+		background: rgba(var(--surface), 0.85);
+		backdrop-filter: blur(10px);
+		-webkit-backdrop-filter: blur(10px);
+		border: 1px solid rgba(var(--section-dark), 0.5);
+		border-radius: 999px;
+		box-shadow: 0 8px 24px rgba(var(--gray), 0.15);
+	}
+
+	.site-navbar {
+		display: flex;
+		align-items: center;
+		gap: 1rem;
+		height: 3rem;
+		padding: 0 0.75rem 0 1.25rem;
+	}
+
+	.site-logo {
+		flex: 0 0 auto;
+		color: rgb(var(--black));
+		font-size: 1.05rem;
+		font-weight: 700;
+		letter-spacing: 0.05em;
+		text-decoration: none;
+		transition: color 0.2s ease;
+	}
+
+	.site-logo:hover {
+		color: var(--accent);
+	}
+
+	.site-nav {
+		display: flex;
+		flex: 1;
+		justify-content: center;
+		gap: 0.15rem;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	.site-nav a {
+		display: block;
+		padding: 0.35rem 0.75rem;
+		border-radius: 999px;
+		color: rgb(var(--black));
+		font-size: 0.9rem;
+		font-weight: 500;
+		text-decoration: none;
+		white-space: nowrap;
+		transition:
+			color 0.2s ease,
+			background-color 0.2s ease;
+	}
+
+	.site-nav a:hover,
+	.site-nav a:focus-visible,
+	.site-nav a[aria-current="page"] {
+		color: var(--accent);
+		background: rgba(var(--section-light), 0.65);
+	}
+
+	.site-menu-toggle {
+		display: none;
+	}
+
+	/* Sits after the links on desktop; on smaller screens it moves next to
+	   the hamburger (see the 960px breakpoint). */
+	.site-theme-toggle {
+		order: 1;
+		flex: 0 0 auto;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 2.25rem;
+		height: 2.25rem;
+		padding: 0;
+		border: none;
+		border-radius: 999px;
+		background: transparent;
+		color: rgb(var(--black));
+		cursor: pointer;
+		transition:
+			color 0.2s ease,
+			background-color 0.2s ease;
+	}
+
+	.site-theme-toggle:hover,
+	.site-theme-toggle:focus-visible {
+		color: var(--accent);
+		background: rgba(var(--section-light), 0.65);
+	}
+
+	.site-theme-icon--sun,
+	:global([data-theme="dark"]) .site-theme-icon--moon {
+		display: none;
+	}
+
+	:global([data-theme="dark"]) .site-theme-icon--sun {
+		display: block;
+	}
+
+	@media (max-width: 960px) {
+		.site-header {
+			border-radius: 18px;
+		}
+
+		/* The links collapse into a hamburger menu that opens inside the
+		   floating header. */
+		.site-navbar {
+			flex-wrap: wrap;
+			justify-content: space-between;
+			gap: 0;
+			height: auto;
+			min-height: 3rem;
+			padding: 0 0.3rem 0 1.25rem;
+		}
+
+		.site-theme-toggle {
+			order: 0;
+			margin-left: auto;
+			width: 2.75rem;
+			height: 2.75rem;
+		}
+
+		.site-menu-toggle {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			width: 2.75rem;
+			height: 2.75rem;
+			padding: 0;
+			border: none;
+			border-radius: 999px;
+			background: transparent;
+			color: rgb(var(--black));
+			cursor: pointer;
+			transition: background-color 0.2s ease;
+		}
+
+		.site-menu-toggle:hover,
+		.site-menu-toggle:focus-visible {
+			background: rgba(var(--section-light), 0.65);
+		}
+
+		.site-menu-icon,
+		.site-menu-icon::before,
+		.site-menu-icon::after {
+			display: block;
+			width: 1.15rem;
+			height: 2px;
+			border-radius: 2px;
+			background: currentColor;
+			transition:
+				transform 0.2s ease,
+				background-color 0.2s ease;
+		}
+
+		.site-menu-icon {
+			position: relative;
+		}
+
+		.site-menu-icon::before,
+		.site-menu-icon::after {
+			content: "";
+			position: absolute;
+			left: 0;
+		}
+
+		.site-menu-icon::before {
+			transform: translateY(-0.35rem);
+		}
+
+		.site-menu-icon::after {
+			transform: translateY(0.35rem);
+		}
+
+		.site-header.is-open .site-menu-icon {
+			background: transparent;
+		}
+
+		.site-header.is-open .site-menu-icon::before {
+			transform: rotate(45deg);
+		}
+
+		.site-header.is-open .site-menu-icon::after {
+			transform: rotate(-45deg);
+		}
+
+		.site-nav {
+			display: none;
+			flex: 0 0 100%;
+			flex-direction: column;
+			gap: 0.1rem;
+			margin-left: -0.75rem;
+			padding: 0.4rem 0 0.7rem;
+			border-top: 1px solid rgba(var(--section-dark), 0.5);
+		}
+
+		.site-header.is-open .site-nav {
+			display: flex;
+			animation: site-menu-in 0.2s ease;
+		}
+
+		.site-nav a {
+			padding: 0.65rem 0.75rem;
+			border-radius: 10px;
+			font-size: 1rem;
+		}
+
+		@keyframes site-menu-in {
+			from {
+				opacity: 0;
+				transform: translateY(-0.4rem);
+			}
+		}
+	}
+</style>
+
+<script>
+	const header = document.querySelector<HTMLElement>(".site-header");
+	const menuToggle = document.querySelector<HTMLButtonElement>(".site-menu-toggle");
+	// Matches the breakpoint above which the links are shown inline.
+	const desktopQuery: MediaQueryList = window.matchMedia("(min-width: 961px)");
+
+	function setMenuOpen(open: boolean): void {
+		if (!header || !menuToggle) {
+			return;
+		}
+		header.classList.toggle("is-open", open);
+		menuToggle.setAttribute("aria-expanded", String(open));
+		menuToggle.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+	}
+
+	function isMenuOpen(): boolean {
+		return header?.classList.contains("is-open") ?? false;
+	}
+
+	menuToggle?.addEventListener("click", () => setMenuOpen(!isMenuOpen()));
+
+	// Picking a link scrolls or navigates away, so the menu is no longer needed.
+	header?.querySelectorAll(".site-nav a").forEach((link) => {
+		link.addEventListener("click", () => setMenuOpen(false));
+	});
+
+	document.addEventListener("click", (event: MouseEvent) => {
+		if (isMenuOpen() && header && !header.contains(event.target as Node)) {
+			setMenuOpen(false);
+		}
+	});
+
+	document.addEventListener("keydown", (event: KeyboardEvent) => {
+		if (event.key === "Escape" && isMenuOpen()) {
+			setMenuOpen(false);
+			menuToggle?.focus();
+		}
+	});
+
+	desktopQuery.addEventListener("change", () => setMenuOpen(false));
+
+	type Theme = "light" | "dark";
+
+	const themeToggle = document.querySelector<HTMLButtonElement>(".site-theme-toggle");
+
+	function currentTheme(): Theme {
+		return document.documentElement.dataset.theme === "dark" ? "dark" : "light";
+	}
+
+	function applyTheme(theme: Theme): void {
+		document.documentElement.dataset.theme = theme;
+		themeToggle?.setAttribute(
+			"aria-label",
+			theme === "dark" ? "Switch to light mode" : "Switch to dark mode",
+		);
+	}
+
+	// The theme itself is set by the inline script in <head>: sync the label.
+	applyTheme(currentTheme());
+
+	themeToggle?.addEventListener("click", () => {
+		const nextTheme: Theme = currentTheme() === "dark" ? "light" : "dark";
+		applyTheme(nextTheme);
+		try {
+			localStorage.setItem("theme", nextTheme);
+		} catch {
+			// Storage can be blocked: the choice then lasts only for this visit.
+		}
+	});
+</script>

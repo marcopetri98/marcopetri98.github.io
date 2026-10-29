@@ -18,6 +18,27 @@
 	--box-shadow:
 		0 2px 6px rgba(var(--gray), 25%), 0 8px 24px rgba(var(--gray), 33%),
 		0 16px 32px rgba(var(--gray), 33%);
+	/* Page background and the text colour used on accent-filled elements. */
+	--surface: 255, 255, 255;
+	--on-accent: 255, 255, 255;
+	color-scheme: light;
+}
+
+/* Dark theme, enabled by setting data-theme="dark" on the <html> element. */
+:root[data-theme="dark"] {
+	--section-dark: 98, 104, 190;
+	--section-light: 46, 50, 100;
+	--section-timeline: #5c64b0;
+	--accent: #8c98ff;
+	--accent-dark: #c4caff;
+	--black: 240, 242, 248;
+	--gray: 150, 162, 190;
+	--gray-light: 42, 48, 64;
+	--gray-dark: 215, 220, 232;
+	--gray-gradient: rgba(var(--gray-light), 50%), rgb(var(--surface));
+	--surface: 15, 18, 26;
+	--on-accent: 15, 18, 26;
+	color-scheme: dark;
 }
 
 @font-face {
@@ -40,6 +61,7 @@ body {
 	font-family: "Atkinson", sans-serif;
 	margin: 0;
 	padding: 0;
+	background: rgb(var(--surface));
 	text-align: left;
 	word-wrap: break-word;
 	overflow-wrap: break-word;

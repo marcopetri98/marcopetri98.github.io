@@ -1,0 +1,73 @@
+---
+import { getCollection } from "astro:content";
+import ArticleGrid from "../components/ArticleGrid.astro";
+import { SITE_OWNER } from "../consts";
+import SiteLayout from "../layouts/SiteLayout.astro";
+import { articleUrl, getArticleLandingData } from "../utils/articleLanding";
+
+const articlePosts = await getCollection("articles");
+const posts = [...articlePosts];
+
+// Newest first: the landing helper already sorts posts by publication date.
+const { latestPosts } = getArticleLandingData(posts, 0, posts.length);
+
+const articles = latestPosts.map((post) => ({
+	title: post.data.title,
+	description: post.data.description,
+	date: post.data.pubDate,
+	href: articleUrl(post),
+	tags: post.data.tags,
+}));
+---
+
+<SiteLayout
+	title={`Articles | ${SITE_OWNER}`}
+	description={`Articles by ${SITE_OWNER} on machine learning research, software engineering and personal opinions.`}
+>
+	<main class="articles-main">
+		<header class="articles-intro">
+			<h1>Articles</h1>
+			<p>
+				Writing on machine learning research, software engineering and the occasional
+				opinion. Pick a topic to narrow the list down.
+			</p>
+		</header>
+
+		<ArticleGrid articles={articles} />
+	</main>
+</SiteLayout>
+
+<style>
+	.articles-main {
+		width: min(920px, calc(100% - 2rem));
+		max-width: none;
+		margin: 0 auto;
+		padding: 2.5rem 0 4rem;
+	}
+
+	.articles-intro {
+		margin-bottom: 1.75rem;
+	}
+
+	.articles-intro h1 {
+		margin: 0 0 0.6rem;
+		font-size: clamp(2rem, 1.5rem + 2vw, 2.8rem);
+		line-height: 1.1;
+		letter-spacing: -0.02em;
+		color: rgb(var(--gray-dark));
+	}
+
+	.articles-intro p {
+		max-width: 720px;
+		margin: 0;
+		color: rgb(var(--gray));
+		font-size: clamp(1rem, 0.92rem + 0.3vw, 1.1rem);
+		line-height: 1.6;
+	}
+
+	@media (max-width: 720px) {
+		.articles-main {
+			padding-top: 1.75rem;
+		}
+	}
+</style>

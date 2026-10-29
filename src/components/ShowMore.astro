@@ -1,0 +1,137 @@
+---
+// Wraps a list whose items beyond the visible limit carry the `data-extra`
+// attribute: those items stay hidden until the "Show more" button is clicked.
+interface Props {
+    hiddenCount: number;
+}
+
+const { hiddenCount } = Astro.props;
+---
+
+<div class="show-more" data-show-more>
+    <div class="show-more-content">
+        <slot />
+    </div>
+    {
+        hiddenCount > 0 && (
+            <button
+                type="button"
+                class="show-more-toggle"
+                aria-expanded="false"
+                data-hidden-count={hiddenCount}
+            >
+                Show more ({hiddenCount})
+            </button>
+        )
+    }
+</div>
+
+<style>
+    .show-more:not(.is-expanded) :global([data-extra]) {
+        display: none;
+    }
+
+    .show-more-toggle {
+        margin-top: 0.9rem;
+        padding: 0.3rem 0.9rem;
+        border: 1px solid rgba(var(--section-dark), 0.8);
+        border-radius: 999px;
+        background: transparent;
+        color: var(--accent);
+        font: inherit;
+        font-size: 0.85rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition:
+            background-color 0.2s ease,
+            color 0.2s ease;
+    }
+
+    .show-more-toggle:hover,
+    .show-more-toggle:focus-visible {
+        background: rgba(var(--section-light), 0.65);
+        color: var(--accent-dark);
+    }
+</style>
+
+<script>
+    const reduceMotion: MediaQueryList = window.matchMedia(
+        "(prefers-reduced-motion: reduce)",
+    );
+
+    function setExpanded(
+        wrapper: HTMLElement,
+        button: HTMLButtonElement,
+        expanded: boolean,
+    ): void {
+        wrapper.classList.toggle("is-expanded", expanded);
+        button.setAttribute("aria-expanded", String(expanded));
+        button.textContent = expanded
+            ? "Show less"
+            : `Show more (${button.dataset.hiddenCount})`;
+    }
+
+    function keepButtonInView(button: HTMLButtonElement): void {
+        const { top, bottom } = button.getBoundingClientRect();
+        if (top < 0 || bottom > window.innerHeight) {
+            button.scrollIntoView({
+                block: "center",
+                behavior: reduceMotion.matches ? "auto" : "smooth",
+            });
+        }
+    }
+
+    function toggle(
+        wrapper: HTMLElement,
+        content: HTMLElement,
+        button: HTMLButtonElement,
+    ): void {
+        if (content.getAnimations().length > 0) {
+            return;
+        }
+
+        const expand = !wrapper.classList.contains("is-expanded");
+        const startHeight = content.offsetHeight;
+        setExpanded(wrapper, button, expand);
+        const endHeight = content.offsetHeight;
+
+        if (reduceMotion.matches) {
+            if (!expand) {
+                keepButtonInView(button);
+            }
+            return;
+        }
+
+        // While collapsing, keep the extra items rendered so they slide away
+        // instead of disappearing before the height animation starts.
+        wrapper.classList.add("is-expanded");
+        content.style.overflow = "hidden";
+        const animation = content.animate(
+            { height: [`${startHeight}px`, `${endHeight}px`] },
+            { duration: 350, easing: "ease-in-out" },
+        );
+        animation.onfinish = (): void => {
+            content.style.overflow = "";
+            wrapper.classList.toggle("is-expanded", expand);
+            if (!expand) {
+                keepButtonInView(button);
+            }
+        };
+    }
+
+    document
+        .querySelectorAll<HTMLElement>("[data-show-more]")
+        .forEach((wrapper) => {
+            const content = wrapper.querySelector<HTMLElement>(
+                ":scope > .show-more-content",
+            );
+            const button = wrapper.querySelector<HTMLButtonElement>(
+                ":scope > .show-more-toggle",
+            );
+            if (content && button) {
+                button.addEventListener("click", () =>
+                    toggle(wrapper, content, button),
+                );
+            }
+        });
+</script>

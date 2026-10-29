@@ -1,0 +1,64 @@
+---
+interface ResearchInterest {
+    title: string;
+    description: string;
+}
+
+interface Props {
+    interests: ResearchInterest[];
+}
+
+const { interests } = Astro.props;
+---
+
+<ol class="interests">
+    {
+        interests.map((interest, index) => (
+            <li class="interest">
+                <span class="interest-index">
+                    {String(index + 1).padStart(2, "0")}
+                </span>
+                <h3>{interest.title}</h3>
+                <p>{interest.description}</p>
+            </li>
+        ))
+    }
+</ol>
+
+<style>
+    .interests {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+        gap: 1.5rem;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+
+    .interest {
+        padding-top: 0.7rem;
+        border-top: 1px solid rgba(var(--section-dark), 0.9);
+    }
+
+    .interest-index {
+        display: block;
+        margin-bottom: 0.2rem;
+        color: var(--accent);
+        font-size: 0.75rem;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+    }
+
+    .interest h3 {
+        margin: 0 0 0.35rem;
+        font-size: 1.02rem;
+        color: rgb(var(--gray-dark));
+    }
+
+    .interest p {
+        margin: 0;
+        color: rgb(var(--gray));
+        font-size: 0.88rem;
+        line-height: 1.6;
+    }
+</style>

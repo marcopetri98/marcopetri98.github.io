@@ -1,13 +1,11 @@
 ---
-import { SITE_TITLE } from "../consts";
-import SocialLinks from "./SocialLinks.astro";
 const today = new Date();
+const copyrightHolder = "Marco Petri";
 ---
 
 <footer>
 	&copy; {today.getFullYear()}
-	{SITE_TITLE}. All rights reserved.
-	<SocialLinks size={32} align="center" />
+	{copyrightHolder}. All rights reserved.
 </footer>
 <style>
 	footer {

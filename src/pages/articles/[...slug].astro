@@ -1,0 +1,28 @@
+---
+import { type CollectionEntry, getCollection, render } from "astro:content";
+import BlogPost from "../../layouts/BlogPost.astro";
+
+// Serves every article at /articles/<slug>/ (see articleUrl in
+// src/utils/articleLanding.ts). The folder name fixes the URL, so renaming the
+// content collection can never change published links.
+type Props = {
+	post: CollectionEntry<"articles">;
+};
+
+type ArticlePath = { params: { slug: string }; props: Props };
+
+export async function getStaticPaths(): Promise<ArticlePath[]> {
+	const posts = await getCollection("articles");
+	return posts.map((post) => ({
+		params: { slug: post.id },
+		props: { post },
+	}));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+---
+
+<BlogPost {...post.data}>
+	<Content />
+</BlogPost>

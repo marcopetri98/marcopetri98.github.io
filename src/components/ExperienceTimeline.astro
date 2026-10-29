@@ -1,0 +1,291 @@
+---
+import ShowMore from "./ShowMore.astro";
+
+interface ExperienceLink {
+    label: string;
+    href: string;
+}
+
+interface Experience {
+    title: string;
+    institution?: string;
+    role?: string;
+    period?: string;
+    location?: string;
+    description?: string | string[];
+    topics?: string[];
+    links?: ExperienceLink[];
+}
+
+interface Props {
+    experiences: Experience[];
+    limit?: number;
+    // When set, the description is collapsed behind a toggle button with this
+    // label, while topics and links stay always visible.
+    detailsLabel?: string;
+}
+
+const { experiences, limit = experiences.length, detailsLabel } = Astro.props;
+
+const hiddenCount = Math.max(0, experiences.length - limit);
+// The page can hold several timelines, so details ids need a unique prefix.
+const instanceId = crypto.randomUUID().slice(0, 8);
+
+function metaLine(experience: Experience): string {
+    return [experience.institution, experience.role, experience.location]
+        .filter(Boolean)
+        .join(" · ");
+}
+
+function hasDescription(experience: Experience): boolean {
+    return Boolean(
+        experience.description && experience.description.length > 0,
+    );
+}
+---
+
+<ShowMore hiddenCount={hiddenCount}>
+    <ol class="timeline">
+        {
+            experiences.map((experience, index) => (
+                <li
+                    class:list={[
+                        "timeline-item",
+                        { "is-current": experience.period?.includes("Present") },
+                    ]}
+                    data-extra={index >= limit ? "true" : undefined}
+                >
+                    <article>
+                        <div class="timeline-head">
+                            <h3>{experience.title}</h3>
+                            {experience.period && (
+                                <span class="timeline-period">
+                                    {experience.period}
+                                </span>
+                            )}
+                        </div>
+
+                        {metaLine(experience) && (
+                            <p class="timeline-meta">{metaLine(experience)}</p>
+                        )}
+
+                        {detailsLabel && hasDescription(experience) && (
+                            <button
+                                type="button"
+                                class="timeline-details-toggle"
+                                aria-expanded="false"
+                                aria-controls={`timeline-${instanceId}-details-${index}`}
+                            >
+                                {detailsLabel}
+                            </button>
+                        )}
+
+                        {hasDescription(experience) && (
+                            <div
+                                id={`timeline-${instanceId}-details-${index}`}
+                                class="timeline-details"
+                                hidden={Boolean(detailsLabel)}
+                            >
+                                {typeof experience.description === "string" && (
+                                    <p class="timeline-description">
+                                        {experience.description}
+                                    </p>
+                                )}
+
+                                {Array.isArray(experience.description) && (
+                                    <ul class="timeline-description timeline-description-list">
+                                        {experience.description.map((item) => (
+                                            <li>{item}</li>
+                                        ))}
+                                    </ul>
+                                )}
+                            </div>
+                        )}
+
+                        {experience.topics && experience.topics.length > 0 && (
+                            <ul class="timeline-topics">
+                                {experience.topics.map((topic) => (
+                                    <li>{topic}</li>
+                                ))}
+                            </ul>
+                        )}
+
+                        {experience.links && experience.links.length > 0 && (
+                            <div class="timeline-links">
+                                {experience.links.map((link) => (
+                                    <a href={link.href} target="_blank">
+                                        {link.label} ↗
+                                    </a>
+                                ))}
+                            </div>
+                        )}
+                    </article>
+                </li>
+            ))
+        }
+    </ol>
+</ShowMore>
+
+<style>
+    .timeline {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+
+    .timeline-item {
+        position: relative;
+        padding: 0 0 1.4rem 1.4rem;
+        border-left: 1px solid rgba(var(--section-dark), 0.9);
+    }
+
+    .timeline-item::before {
+        content: "";
+        position: absolute;
+        top: 0.4rem;
+        left: -0.3rem;
+        width: 0.5rem;
+        height: 0.5rem;
+        border: 1.5px solid var(--accent);
+        border-radius: 50%;
+        background: rgb(var(--surface));
+    }
+
+    .timeline-item.is-current::before {
+        background: var(--accent);
+    }
+
+    .timeline-head {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 0.15rem 1rem;
+    }
+
+    .timeline-head h3 {
+        margin: 0;
+        font-size: 1.02rem;
+        line-height: 1.4;
+        color: rgb(var(--gray-dark));
+    }
+
+    .timeline-period {
+        color: rgb(var(--gray));
+        font-size: 0.82rem;
+        font-weight: 700;
+        letter-spacing: 0.03em;
+        white-space: nowrap;
+    }
+
+    .timeline-meta {
+        margin: 0.1rem 0 0;
+        color: var(--accent);
+        font-size: 0.88rem;
+    }
+
+    .timeline-details-toggle {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        margin-top: 0.5rem;
+        padding: 0.12rem 0.6rem;
+        border: 1px solid rgba(var(--section-dark), 0.8);
+        border-radius: 999px;
+        background: transparent;
+        color: var(--accent);
+        font: inherit;
+        font-size: 0.78rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+    }
+
+    .timeline-details-toggle:hover,
+    .timeline-details-toggle:focus-visible {
+        background: rgba(var(--section-light), 0.65);
+        color: var(--accent-dark);
+    }
+
+    .timeline-details-toggle::after {
+        content: "";
+        width: 0.3rem;
+        height: 0.3rem;
+        border-right: 1.5px solid currentColor;
+        border-bottom: 1.5px solid currentColor;
+        transform: translateY(-0.1rem) rotate(45deg);
+        transition: transform 0.2s ease;
+    }
+
+    .timeline-details-toggle[aria-expanded="true"]::after {
+        transform: translateY(0.1rem) rotate(-135deg);
+    }
+
+    .timeline-description {
+        margin: 0.5rem 0 0;
+        color: rgb(var(--gray-dark));
+        font-size: 0.9rem;
+        line-height: 1.6;
+    }
+
+    .timeline-description-list {
+        padding-left: 1.1rem;
+    }
+
+    .timeline-description-list li + li {
+        margin-top: 0.2rem;
+    }
+
+    .timeline-topics {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.3rem;
+        margin: 0.6rem 0 0;
+        padding: 0;
+        list-style: none;
+    }
+
+    .timeline-topics li {
+        padding: 0.05rem 0.5rem;
+        border-radius: 999px;
+        background: rgba(var(--section-light), 0.65);
+        color: var(--accent-dark);
+        font-size: 0.75rem;
+    }
+
+    .timeline-links {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.9rem;
+        margin-top: 0.5rem;
+        font-size: 0.85rem;
+    }
+
+    .timeline-links a {
+        font-weight: 600;
+        text-decoration: none;
+    }
+
+    .timeline-links a:hover {
+        color: var(--accent-dark);
+        text-decoration: underline;
+    }
+</style>
+
+<script>
+    document
+        .querySelectorAll<HTMLButtonElement>(".timeline-details-toggle")
+        .forEach((button) => {
+            const details = document.getElementById(
+                button.getAttribute("aria-controls") ?? "",
+            );
+            if (details) {
+                button.addEventListener("click", () => {
+                    const expanded =
+                        button.getAttribute("aria-expanded") === "true";
+                    button.setAttribute("aria-expanded", String(!expanded));
+                    details.hidden = expanded;
+                });
+            }
+        });
+</script>
